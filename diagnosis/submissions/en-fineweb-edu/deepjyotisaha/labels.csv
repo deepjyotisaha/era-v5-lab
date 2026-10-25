@@ -1,0 +1,151 @@
+doc_id,read,verdict,diseases,evidence,hex,note
+fac8900a570b630b,full,fix,C1,"C1: ""DOWNLOAD: Somerset IDB Biodiversity Action Plan 2010"" at offset 1357",,remove the download link line
+f63eec264ed25737,full,fix,C1,"C1: ""Updated 5 yearss ago Executive Editor [Photo: Dan Gaye]"" at offset 0",,Remove the date line and byline at the start
+299c56aecd605139,full,fix,C1,"C1: ends with ""seum / Science & Society Picture Library"" at offset 798",,remove boilerplate
+469e0a5a812c28f3,full,fix,C1,"C1: ends with ""culosis - Experiments and Discoveries »|"" at offset 8853",,remove the related-links footer at the end
+2067313a5e000336,full,fix,C3;C4,"C3: ""Monbiot Discovers Math, Puts it to Good Use George Monbiot has discovered someth…"" at offset 2383 | C4: ""Monbiot Discovers Math, Puts it to Good Use George Monbiot has discovered someth…"" at offset 2383",,remove the Monbiot paragraph at the end
+6ef68bf763ef446c,full,clean,,,,
+b83102bbd734fbfe,full,clean,,,,
+ffa5766a9a53cd2c,full,fix,C3,"C3: ""One more angle to consider in a problem that is already extremely complex..."" at offset 787",,Remove:One more angle to consider in a problem that is already extremely complex...
+9fef13f8548950de,full,clean,,,,
+0b0d513a390b5fe2,full,drop,B4,"B4: ""Point(Param1.X, Param1.Y)"" at offset 1987",,"Point(Param1.X, Param1.Y)"
+3054e5cb9e7109dc,full,fix,C1,"C1: ""Paperback: 85 pages"" at offset 825",,delete from - paperback
+aa6dabe77b77999c,full,clean,,,,
+74ea30694d60f739,full,fix,C1,"C1: ends with ""ng HERE © 1995-2017 Bible History Online"" at offset 9080",,Remove the boilerplate
+2be6fd0360082a67,full,clean,,,,
+88dcf988df1065ff,full,fix,C1,"C1: ""There are no developed facilities. East Bay Regional Park District’s page for th…"" at offset 1088",,Remove: There are no developed facilities. East Bay Regional Park District’s page for this site.
+57e8a90835567c14,full,fix,C1,"C1: ""Courtesy: Taranga Magazine"" at offset 0",,remove Courtesy: Taranga Magazine
+8df5a8c705d18935,full,clean,,,,
+6245d1c6dfa146f9,full,fix,B4;C1,"B4: ends with "" University of Texas at Austin // end //"" at offset 2794 | C1: ""From: University of Texas-Austin Posted: Thursday, March 24, 2011"" at offset 0",,remove the byline at the start and the code comment at the end
+5e04ef5d10f2bd9f,full,clean,,,,
+ef4cf09c586b3cbb,full,clean,,,,
+5506faa5dfa46aed,full,fix,C1,"C1: ""Programs for children"" at offset 0",,"Remove""Programs for children """
+f6393483c601faf0,full,fix,C1,"C1: ends with ""you leave the store. View all Kids Bikes"" at offset 3851",,"Remove ""View all Kids Bikes"""
+50560a0d30384be4,full,fix,C1,"C1: ends with ""ww.pembroke-castle.co.uk View Larger Map"" at offset 3507",,"Remove ""View Larger Map"""
+8620d74ba9ae6cdc,full,fix,C3,"C3: ends with "" information about the collection, visit"" at offset 3372",,"Remove ""For more information about the collection, visit"""
+7787f99cff06a5a5,full,fix,C1,"C1: ""Home : Travel : Costa Rica : CR Handbook : One Article"" at offset 0",,"Remove ""Home : Travel : Costa Rica : CR Handbook : One Article """
+5d83a600900ceb99,full,fix,C1;D3,"D3: Cyrillic text ""Фёдор Никифорович Шведов"" at offset 3219 | D3: Cyrillic text ""Дерево, как летопись засух"" at offset 21518 | C1: ends with "" and the Laboratory of Tree-Ring Science"" at offset 26385",,"Remove sentences with |This .... | and everything after ""- Grissino-Mayer"""
+78d8b43d4048ede0,full,clean,,,,
+2aad35e970592c35,full,clean,,,,
+b92217b50cbd3259,full,fix,C1,"C1: ""Read more: http://feedproxy.goo...penguin-species"" at offset 301 (phrase ""read more"")",,"Remove ""... Read more: http://feedproxy.goo...penguin-species Saving Africa's only native penguin species No replies to this topic 0 user(s) are reading this topic 0 members(s), 0 guests(s) and 0 anonymous member(s)"""
+8c4e05adb054ff9e,full,clean,,,,
+83a74d895270be43,full,fix,C1,"C1: ""Seneca Gardens Arborist Questions? Comments? Email Michael at [email protected]"" at offset 3992",,
+f6ffaf98472d4993,full,clean,,,,
+a14b25405c278a3b,full,fix,C1;C5,"C1: ""|| Home | Free Articles for Your Site | Submit an Article | …"" at offset 0 (6 "" | "" separators) | C5: 15 of 24 lines have 3 words or fewer | C5: ends with ""ts Religion and Faith Travel and Leisure"" at offset 2632",,"Remove ""|| Home | Free Articles for Your Site | Submit an Article | Advertise | Link to Us | Search | Contact Us || OTHER ITA SITES: "" and ""Auto and Trucks Business and Finance Computers and Internet Food and Drink Gadgets and Gizmos Kids and Teens Music and Movies Pets and Animals Politics and Government Recreation and Sports Religion and Faith Travel and Leisure"""
+da7b26e33a187835,full,fix,C1;C3,"C1: ends with ""t question...) Other Interview Questions"" at offset 577 | C3: ""What is a rendezvous point? (Continued from previous question...)"" at offset 0",,"Remove ""What is a rendezvous point? (Continued from previous question...) "" and ""(Continued on next question...) Other Interview Questions"""
+95fb8e3e046c12c8,full,fix,C1,"C1: ""By Kyle Matchett, Queen’s University Belfast"" at offset 78",,remove the byline
+c6445e00ac9c7e0e,full,clean,,,,
+a0578cb418b31c4e,full,fix,C1,"C1: ""This section contains 818 words (approx. 3 pages at 300 words per page)"" at offset 4770",,"Remove ""This section contains 818 words (approx. 3 pages at 300 words per page)"" and ""|Name: _________________________||Period: ___________________| """
+5608694099c08c03,full,clean,,,,
+5a819ae3c65d0f6f,full,clean,,,,
+e816cc7c71cacd44,full,fix,C1,"C1: ""Monday, July 20, 2009"" at offset 131",,remove the date line
+3092ad2616653075,full,fix,C1,"C1: ends with ""ings and Life itself. Continue reading →"" at offset 2876",,"Remove ""Continue reading →"""
+d9cf118c7cae38e0,full,fix,C3,"C3: ""week we celebrate the holiday of Chanuka."" at offset 0",,"Remove ""week we celebrate the holiday of Chanuka."""
+3e44df6a7ddb0098,full,fix,B4,"B4: ""`page.data.shortTitle || page.data.title`"" at offset 0",,"Remove ""`page.data.shortTitle || page.data.title` John Adams, Defender of the Declaration of Independence Pictures & Records Add your story… John Adams, 1735-1826 """
+c0219da20d54f72b,full,fix,C1,"C1: ""Tuesday, February 17, 2015 Peter A. Kirby"" at offset 0",,"Remove ""Tuesday, February 17, 2015 Peter A. Kirby """
+1e5e295e77f6c38e,full,fix,C1,"C1: ""By Kevin Schargen"" at offset 0",,
+3c642ba9d39503cb,full,fix,B4,"B4: ""This is my java program called GramCalories.java, attached is my output public s…"" at offset 813",,
+de7a558b2451074d,full,fix,C1,"C1: ""by Ami Karnosh, a Seattle-area certified nutritionist"" at offset 0",,"Remove ""by Ami Karnosh, a Seattle-area certified nutritionist """
+055cb84b1989d425,full,clean,,,,
+22342dec1dc4a8e6,full,fix,C1,"C1: ""THE SPEECH CHAIN (from Denes x Pinson 1963:4) IDEA | SEMANTI…"" at offset 6878 (6 "" | "" separators)",,"Remove ""THE SPEECH CHAIN (from Denes x Pinson 1963:4) IDEA | SEMANTIC REPRESENTATION | | UNDERLYING SYNTACTIC REPRESENTATION | TRANSFORMATIONAL RULES RULES | | SURfACE SYNTACTIC REPRESENTATION | | PHONETIC REPRESENTATION | ""A possible information-flow model of speech production"" (from Cooper 1980:298) """
+1ddeb05a496eb781,full,clean,,,,
+cb4178abecf9d16f,full,clean,,,,
+e0af946d8b19d2ea,full,fix,C1,"C1: ""Old Newspaper/Magazine Clippings Archive"" at offset 0",,"Remove ""Old Newspaper/Magazine Clippings Archive """
+ec2b61417f2900c8,full,fix,C1;C2,"C1: ""[...] Read more."" at offset 283 (phrase ""read more"") | C2: ""family, an enveloped RNA virus family, and, more particularly, human coronaviruses (HCoV)"" at offset 300",,"Remove anything before ""HCoV are now known.."""
+26bc2de34e7eb5f8,full,clean,,,,
+b648794f1bb567ab,full,fix,C1,"C1: ""(1 LU provided)"" at offset 536",,"Remove "" (1 LU provided) """
+d538272c1901c946,full,fix,C1,"C1: ""Source: Energy Information. East and West are demarked by Mississippi River."" at offset 1540 | C1: ""Source: EIA, “Today in Energy,” March 8, 2016."" at offset 3524 | C1: ""Source: Energy Information Administration"" at offset 9702",,remove the source lines
+35f4e61f5e3aa309,full,clean,,,,
+327587395df2d664,full,fix,C1,"C1: ""“The... (The entire section is 1939 words.)"" at offset 4730",,"Remove ""“The... (The entire section is 1939 words.)"""
+3dd602deababda92,full,clean,,,,
+b63bdf2807c3426c,full,clean,,,,
+d2baba0ab6f1d42b,full,clean,,,,
+34472f8d024bb3f3,full,fix,C1,"C1: ends with ""tion contact Mr L. Forbes, PT of Biology"" at offset 1415 | C1: ""Psychology is an S6 option only"" at offset 0",,
+057bbddb5f6c092a,full,fix,C1,"C1: ""LA MONNOIE, Abrégé & La vie & M. Baillet"" at offset 4779 | C1: ""Help support New Advent and get the full contents of this website as an instant …"" at offset 0",,
+89cc18b9fb5161d9,full,fix,C1,"C1: ""We've sent an email with your order details. Order ID #: To access this title, v…"" at offset 1141",,"Remove ""We've sent an email with your order details. Order ID #: To access this title, visit your library in the app or on the desktop website."""
+2397d0634f220995,full,fix,C1,"C1: ends with ""- Mounting and securing the alarm system"" at offset 4157",,"Remove ""Join David Ross for an in-depth discussion in this video"" What you should know before watching this course, part of Raspberry Pi: Home Monitoring and Control. "" and """
+bef4d6ce8fb810b1,full,clean,,,,
+e2e30458a5b43acf,full,fix,C1,"C1: ends with ""tures | Amazing Statues Around The World"" at offset 2490 | C1: ""Welcome To Learn English!"" at offset 0",,"Remove ""Welcome To Learn English! "" and ""Do you need regular tutoring to improve your grades? English Essay Writing Rules 16 Habits of Sensitive People | Top 10 Wonders of The World 10 People Who Did Terrible Things for Good Reasons 20 Things Smart People Don’t Do | 6 Habits of Successful People English Grammar | Mind Blowing Photos | 15 Unique Animals Unbelievable Photos | The Most Dangerous Roads | The Biggest Cruise Ship Expensive Diamonds | Hauntingly Beautiful Places | The Giant Animals Incredible Hyper-realistic Sculptures | Amazing Statues Around The World"""
+a23337411d43e7c1,full,drop,C1,"C1: ""Don't forget to check out the rest of my lessons in my store!"" at offset 310",,
+a984946ad306c693,full,clean,,,,
+3995ee85a7b52490,full,fix,C1,"C1: ends with ""ary changes help some children with ADHD"" at offset 3787",,"Remove ""Explore further: Dietary changes help some children with ADHD"""
+4f71a74567f4d4aa,full,fix,C1,"C1: ends with "" for the Germans Part Eleven: The Finale"" at offset 14123",,"Remove ""More to come (maybe): Part Five: The Gallipoli Campaign Part Six: The War at Sea Part Seven: The War in France Part Eight: Verdun Part Nine: Marne Part Ten: The End for the Germans Part Eleven: The Finale"""
+316f8c9401d961fa,full,clean,,,,
+fd4709066403bd0e,full,fix,C1,"C1: ""Editor's note: This story was revised for clarity after it was first published."" at offset 4381",,
+244834eedcd65cea,full,fix,C1,"C1: ""Urine Analysis (1/3): Sediment and Dipstick Examination Urine Sediment: Microsco…"" at offset 0",,
+9dc429836f855f2d,full,clean,,,,
+a500ba93e323a10c,full,fix,C1,"C1: ""Source: Global Techno Legal News And Views."" at offset 2470",,
+c3232deb3a159cb4,full,fix,C1,"C1: ends with "" Archive EDITOR: R. K. Burnam, June 2003"" at offset 3860 | C1: ""|TOSCANA - Pisa| |FILE : Duomo 3| |TITLE : Creation of Adam—Creation of Eve| LOC…"" at offset 0",,"Remove""|TOSCANA - Pisa| |FILE : Duomo 3| |TITLE : Creation of Adam—Creation of Eve| LOCATION: Pisa Duomo, window n XI DIMENSIONS: 2.23 X 0.95 m. (panel 2, arched, 2.23 x 0.95 m.—panel 1, rectangle, 0.995 x 0.95 m.) PROVENANCE: Original location. "" and ""PHOTOGRAPHIC REF.: R. K. Burnam Archive EDITOR: R. K. Burnam, June 2003"" and ""|Partition of 15th century windows| """
+9073b10038f6c85c,full,clean,,,,
+500983fd20d093fe,full,clean,,,,
+f591739a28aa58e5,full,clean,,,,
+b6c1b992344ef3fb,full,clean,,,,
+a52716789e8075d7,full,fix,C1,"C1: ""© Tim Dwyer and Melissa Vanegas, 2015."" at offset 12542",,
+52a5ad1c4e1f6300,full,clean,,,,
+e90e681a1b318200,full,fix,C1,"C1: ends with ""nd URL||Standards||Standards||Standards|"" at offset 2362",,"Remove ""Below is a chart that shows the various IE browsers, and how the doctype affects the way they render the box model. The blue highlight indicates incorrect interpretation of the box model |HTML 4.01 Transitional - missing doctype||Quirks||Quirks||Quirks| |HTML 4.01 Transitional - missing URL from doctype||Quirks||Quirks||Quirks| |HTML 4.01 Transitional - full doctype||Standards||Standards||Standards| |XHTML 1.0 Transitional - missing doctype||Quirks||Quirks||Quirks| |XHTML 1.0 Transitional - missing URL from doctype||Quirks||Quirks||Standards| |XHTML 1.0 Transitional - full doctype||Quirks||Quirks||Standards| |XHTML 1.0 Transitional - missing Prolog||Standards||Standards||Standards| |XHTML 1.0 Transitional - missing Prolog and URL||Standards||Standards||Standards|"""
+d3653f4aedab9cf8,full,fix,C1,"C1: ""Stefanie Fischer, Family and Everyday Life, in: Key Documents of German-Jewish H…"" at offset 29021",,
+d4865e0f799b5f6b,full,clean,,,,
+03310354e99f2641,full,clean,,,,
+1326363e0640f8ec,full,clean,,,,
+7fd9f4216d497430,full,clean,,,,
+46ec46e8053e7162,full,clean,,,,
+a4747e3bfaa07216,full,clean,,,,
+aab4908bfe7a7768,full,clean,,,,
+3eb7d6235cc59a4c,full,clean,,,,
+baa5fe4efdc10714,full,drop,C5,"C5: ""The Little Robber Girl"" at offset 0",,
+6051989bdb0f0243,full,fix,C1,"C1: ""Click here to find out more about Schools for Asia."" at offset 4012 (phrase ""click here"") | C1: ends with "" about Schools for Asia. By Sabine Dolan"" at offset 4078",,"Remove ""|Murun helps with her family’s herd of goats. © UNICEF Mongolia/2012/Dolan "" and ""Click here to find out more about Schools for Asia. By Sabine Dolan"""
+de38595b6c873c47,full,fix,C1,"C1: ""Published 29 August 2013."" at offset 2889",,"Remove ""Published 29 August 2013."""
+5b0cc2194b9ff941,full,clean,,,,
+7105413375448daa,full,clean,,,,"Remove ""- Minicore disease - Minicore myopathy - Multi-minicore disease - Multicore disease - Multicore myopathy - Multiminicore myopathy"""
+d1c9dee1017f00c2,full,clean,,,,
+0115aff70fa5c29f,full,fix,C1,"C1: ""Corrections: Weaver Street Market (not Brooks Contractor) pays for the food wast…"" at offset 3713",,
+917fd2edc3c6d934,full,fix,C1,"C1: ""World government should conduct serious campaigns against smoking. - Kategoria: …"" at offset 0",,
+0a6f6e52371ec838,full,fix,C1;C3,"C1: ends with ""w to Remove Dead Cells From the Underarm"" at offset 2902 | C3: ""particularly..."" at offset 1875",,
+bf0feded61535893,full,fix,B4,"B4: ""A one-to-one function and its inverse can be used to make information secure. Th…"" at offset 0",,
+82a3cb89e9228a1b,full,clean,,,,
+f221d9446d5d0b9f,full,fix,C1,"C1: ""To learn more about a specific theme or to learn what an individual school offer…"" at offset 599",,
+1d5ed55651a0aa9a,full,fix,C1,"C1: ends with ""mensions of Diversity, a podcast episode"" at offset 3736",,"Remove ""• From Example to Exemplary, a free guide to writing outstanding application essays • What to Do if You Belong to an Overrepresented Applicant Group • Different Dimensions of Diversity, a podcast episode"""
+5735bb4e59e3c0f7,full,fix,C1,"C1: ends with ""ts’ Voice – Communiqué no 7 – 18/12/2008"" at offset 3086 | C1: ""Cypriots’ Voice – Communiqué no 7 – 18/12/2008"" at offset 3041",,
+0e311ef4a1be30d1,full,fix,C1,"C1: ends with ""ter ID laws. Website: Let My People Vote"" at offset 1363",,"Remove ""Website: Let My People Vote"""
+aa6b2dd01ba65c60,full,fix,C1,"C1: ""(More on species extinction to follow.)"" at offset 1651",,
+052da7877f0fb2e0,full,clean,,,,
+1ea20e1f0bc3c4ad,full,fix,C1,"C1: ends with ""ose a citation style from the tabs below"" at offset 2357",,"Remove ""Mendeley saves you time finding and organizing research Choose a citation style from the tabs below"""
+eb4dd294df9ffd70,full,fix,C1,"C1: ""By Lesley Russell"" at offset 0",,remove the byline
+a6dae59236a2c566,full,fix,D5,"D5: ""number8"" at offset 14",,
+26113752d0fc3d55,full,clean,,,,
+4bc865f017fd4de4,full,clean,,,,
+f93a0d1a140e60bf,full,fix,C1,"C1: ends with ""k to a Walton Learning Institute Advisor"" at offset 1238",,"Remove ""Call now, to speak to a Walton Learning Institute Advisor"""
+8ffd0709894a49d8,full,fix,C1,"C1: ends with ""ineArticles.com/?expert=Gabriel_J._Adams"" at offset 2300",,"Remove ""Article Source: http://EzineArticles.com/?expert=Gabriel_J._Adams"""
+68cd30ce2e99a0c3,full,fix,C1,"C1: ends with ""): 460. doi: 10.1136/bmj.39246.620486.AE"" at offset 11059",,"Remove ""Available online: http://www.healthyhousing.org.nz/publications "" and ""British Medical Journal 334(7591): 460. doi: 10.1136/bmj.39246.620486.AE"""
+c610972e0fd87189,full,fix,C1,"C1: ""Chapter 02 Worksheet Return to worksheet index."" at offset 0",,
+35a68418976cb72d,full,fix,C1,"C1: ""by David Downs"" at offset 0",,
+adb413462a073339,full,fix,C1,"C1: ""Abstract Share this page"" at offset 32 (phrase ""share this"")",,"Remove ""Author(s): Roane TM, Kellogg ST Abstract Share this page """
+a60295a993ceb6d3,full,clean,,,,
+eaa312e480572635,full,fix,C1,"C1: ""Photo: Photo: Christopher Farber/Wired."" at offset 1795",,
+8e14d0dab591ce9a,full,clean,,,,
+bac3d122932d3aeb,full,fix,C1,"C1: ends with ""een to Malacca? If not, you’re welcome 😛"" at offset 1169",,"Remove """"have been"" or ""have gone"" "" and ""By the way, have you been to Malacca? If not, you’re welcome 😛"""
+9f0180c6d34831fa,full,fix,C1,"C1: ends with ""atural environment. Show Summary Details"" at offset 682",,"Remove ""Show Summary Details"""
+f2a529a08fa13984,full,fix,C1,"C1: ""Frederick Deknatel September 23, 2014 | This article appeared in the October 13,…"" at offset 0",,
+727910b65f57fd65,full,fix,C1,"C1: ""Contributed by Ryan Wheeler and Bonnie Sousa"" at offset 0",,
+2a2d04c1116bac91,full,clean,,,,
+f657d84936b25b65,full,fix,C1,"C1: ends with "": Gut bacteria control allergic diseases"" at offset 3573",,"Remove ""Explore further: Inner weapons against allergies: Gut bacteria control allergic diseases"""
+c2c340c159d045e5,full,clean,,,,
+6871fe56e1b56c88,full,fix,C1,"C1: ends with ""doi:10.1001/archsurg.1971.01350110160032"" at offset 1153",,"Remove ""SCHUKNECT HF. Atlas of Ear Surgery.. Arch Surg. 1971;103(5):658. doi:10.1001/archsurg.1971.01350110160032"""
+9e3dc3a927d22077,full,fix,C1,"C1: ""To learn more about how to protect your business from cybersecurity risks, talk to one of our security experts today."" at offset 5721",,remove the sales line at the end
+551d8d0dbc890bd1,full,fix,C1,"C1: ""1911 Encyclopædia Britannica/Kleist, Bernd Heinrich Wilhelm von"" at offset 0",,
+841da1d7e68b3ab8,full,fix,F1,F1: phone number at offset 1597 | F1: phone number at offset 1800 | F1: phone number at offset 3376 | F1: Phone Number at offset 1597,,
+402ad1b3b8ae7777,full,clean,,,,
+e80b96293c852a8d,full,fix,C1,"C1: ""Latest revision August 2009"" at offset 0",,
+5e224eade2a833db,full,fix,F1,F1: phone number at offset 2050,,remove the phone number
+051405acca3380a0,full,clean,,,,
+8f9d78894e224f2e,full,clean,,,,
+0ffa4d3a9d1a4e66,full,fix,C1,"C1: ends with ""d.Learn more about Conditions & Diseases"" at offset 842",,"Remove ""Learn more about Conditions & Diseases"""
+fdf3821c887532e3,full,fix,C1,"C1: ""To learn more about the history of Rounders, visit the Online Guide to Tradition…"" at offset 2097",,"Remove ""To learn more about the history of Rounders, visit the Online Guide to Traditional Games."""
+32deaaf4c71fc537,full,fix,C1,"C1: ""Click here to find out how to get rid of it."" at offset 5203",,
+b8d894678f7ba130,full,fix,C1,"C1: ""June 17, 2008"" at offset 0",,
+17f454a49a5f4746,full,clean,,,,
+94eceb6eed4229ec,full,clean,,,,
+e887c52b7834a44d,full,clean,,,,
+67f5d3be333678ad,full,fix,C1,"C1: ""- Religion and Philosophy» - Christianity, the Bible & Jesus"" at offset 0",,"Also remove ""Until then . . ."""
+16c01d83afaa52b8,full,clean,,,,
+aa45dbc889becf3a,full,clean,,,,

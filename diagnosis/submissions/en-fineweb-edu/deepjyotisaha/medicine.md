@@ -1,10 +1,10 @@
 # Medicine sheet: en-fineweb-edu (deepjyotisaha)
 
-Written from the first 150 labelled documents of the pack (500 in all). Every number below is produced by `medicine.py`, which runs each rule against the labels in `labels.csv` and against the whole pack. Diseases found more than five times so far: **C1** and **C3**.
+Written from all 500 documents of the pack. Every number below is produced by `medicine.py`, which runs each rule against the labels in `labels.csv` and against the whole pack. Diseases found in more than five documents: **C1** (277), **C3** (13), **B4** (8), **F1** (8), **D3** (6).
 
 ## Medicine 1: C1 boilerplate
 
-1. **Disease:** C1, in 79 of the 150 labelled documents (87 labelled cases). Three examples:
+1. **Disease:** C1, in 277 of the 500 labelled documents (592 labelled cases). Three examples:
    - `74ea30694d60f739` (document 13): "© 1995-2017 Bible History Online"
    - `f6393483c601faf0` (document 22): "View all Kids Bikes"
    - `1e5e295e77f6c38e` (document 45): "By Kevin Schargen"
@@ -18,19 +18,19 @@ Written from the first 150 labelled documents of the pack (500 in all). Every nu
    - line scorer: every line also gets a score from 0 to 1 from a logistic regression trained on the labels (positive: the labelled C1 lines; negative: every line of the documents labelled clean). Its features are what boilerplate lines share whatever their words: length, a full stop at the end, position (first or last three lines), link words, web address, ©, date, separators, share of capitalised words, digits, whether a paragraph follows, and how many other documents repeat the line. A line scoring 0.97 or more is removed, but only if it is at most 200 characters and carries an explicit boilerplate signal (link word, web address, ©, date, byline or separator), so an article title or an ordinary sentence is never removed on its score alone;
    - block expansion: a line next to a removed line is removed too if it is short, has no full stop, scores at least half the threshold, and is signalled or a "Key: value" line (the rest of a byline or of a book-details block);
    - a teaser glued to the end of a sentence ("…can be prescribed.Learn more about …") removes only the teaser, never the sentence;
-   - guard: if all of this would remove more than 20% of a document and more than 300 characters, nothing is cut and the document is flagged for drop (so a normal footer on a short page is cut, not turned into a drop). The threshold 0.97 is the one that catches the most labelled lines while changing no clean document, in a five-fold test on documents the scorer did not see during training (`c1tune.py`).
+   - guard: if all of this would remove more than 20% of a document and more than 300 characters, nothing is cut and the document is flagged for drop (so a normal footer on a short page is cut, not turned into a drop). The threshold 0.97 is the one that catches the most labelled lines while changing at most 1% of the clean documents, in a five-fold test on documents the scorer did not see during training (`c1tune.py`).
 
    In code: the function `c1_spans(text)` in **Runnable code** at the end of this sheet.
 
-3. **Action:** fix. The matched text is removed; the rest of the document is kept.
+3. **Action:** fix. The matched text is removed; the rest of the document is kept. A document the guard flags is dropped.
 
-4. **Harm test:** proxy gold set = the 59 rows of `labels.csv` with verdict `clean` (each read in full, no disease found). The medicine changes or drops **0 of 59** of them (0.0%, each tested by a scorer that had not seen it): **pass** against the 1% bar. On the whole pack it changes 150 of 500 documents and removes 13,477 of 2,442,877 characters (0.55%). The official gold set for English (owned by Data A) is not published yet; this test will be repeated on it when it is.
+4. **Harm test:** proxy gold set = the 202 rows of `labels.csv` with verdict `clean` (each read in full, no disease found). The medicine changes or drops **2 of 202** of them (0.99%, each tested by a scorer that had not seen it): **pass** against the 1% bar. On the whole pack it changes 145 of 500 documents and removes 15,944 of 2,442,877 characters (0.65%). The official gold set for English (owned by Data A) is not published yet; this test will be repeated on it when it is.
 
-5. **Side effects:** on documents the scorer had not seen, the medicine finds 53 of the 86 labelled C1 lines (62%; the phrase rules alone find 47). It misses C1 that has no fixed wording and no boilerplate signal: one-off site headings ("Programs for children", "Chapter 02 Worksheet"), reference lists and citations, catalogue records and promotion inside a long paragraph. These are left to the readers. Article titles are kept on purpose: the first version of the scorer removed titles and sentences such as "By the end of 1992, …" from clean documents, which is why the scorer may only remove signalled lines. Remaining risks: a "Source:" line under a chart, and a short line with a date or a link word that belongs to the article.
+5. **Side effects:** on documents the scorer had not seen, the medicine finds 212 of the 540 labelled C1 lines (39%; the phrase rules alone find 117). It misses C1 that has no fixed wording and no boilerplate signal: one-off site headings ("Programs for children", "Chapter 02 Worksheet"), reference lists and citations, catalogue records and promotion inside a long paragraph. These are left to the readers. Article titles are kept on purpose: the first version of the scorer removed titles and sentences such as "By the end of 1992, …" from clean documents, which is why the scorer may only remove signalled lines. Remaining risks: a "Source:" line under a chart, and a short line with a date or a link word that belongs to the article.
 
 ## Medicine 2: C3 truncated document
 
-1. **Disease:** C3, in 6 of the 150 labelled documents (6 labelled cases). Three examples:
+1. **Disease:** C3, in 13 of the 500 labelled documents (14 labelled cases). Three examples:
    - `2067313a5e000336` (document 5): "He writes in the Guardian on Tuesday:"
    - `8620d74ba9ae6cdc` (document 24): "For more information about the collection, visit"
    - `d9cf118c7cae38e0` (document 42): "week we celebrate the holiday of Chanuka."
@@ -41,13 +41,87 @@ Written from the first 150 labelled documents of the pack (500 in all). Every nu
 
 3. **Action:** fix. The matched text is removed; the rest of the document is kept.
 
-4. **Harm test:** proxy gold set = the 59 rows of `labels.csv` with verdict `clean` (each read in full, no disease found). The medicine changes or drops **0 of 59** of them (0.0%): **pass** against the 1% bar. On the whole pack it changes 3 of 500 documents and removes 268 of 2,442,877 characters (0.01%). The official gold set for English (owned by Data A) is not published yet; this test will be repeated on it when it is.
+4. **Harm test:** proxy gold set = the 202 rows of `labels.csv` with verdict `clean` (each read in full, no disease found). The medicine changes or drops **0 of 202** of them (0.00%): **pass** against the 1% bar. On the whole pack it changes 4 of 500 documents and removes 346 of 2,442,877 characters (0.01%). The official gold set for English (owned by Data A) is not published yet; this test will be repeated on it when it is.
 
-5. **Side effects:** the medicine finds 1 of the 6 labelled cases. It misses cut-offs that do not end on a dangling word or a colon (for example a teaser ending in "..."), and documents that start in the middle of a sentence. Some labelled cut-offs are removed by the C1 medicine first, because their last line is also a link ("…For more information about the collection, visit"). On the whole pack it changes 3 documents; checked on 25 Oct, one of them is a title ending in "On" ("The Saga Lives On"), which is a wrong removal.
+5. **Side effects:** the medicine finds 2 of the 14 labelled cases. It misses cut-offs that do not end on a dangling word or a colon (for example a teaser ending in "..."), and documents that start in the middle of a sentence. Some labelled cut-offs are removed by the C1 medicine first, because their last line is also a link ("…For more information about the collection, visit"). On the whole pack it changes 4 documents; checked on 25 Oct, one of them is a title ending in "On" ("The Saga Lives On"), which is a wrong removal.
+
+## Medicine 3: F1 personal data
+
+1. **Disease:** F1, in 8 of the 500 labelled documents (13 labelled cases). Three examples:
+   - `841da1d7e68b3ab8` (document 135): "phone number at offset 1597"
+   - `6a515f44bd213b3d` (document 155): "phone number after a Tel: label at offset 7182"
+   - `e202cef6da70c403` (document 450): "phone number after a Tel: label at offset 3943"
+
+2. **Medicine:** Remove every email address, phone number and ID number, together with a label in front of it ("Tel:", "Fax:", "Phone:"). Nothing is put in its place: a placeholder such as "[phone]" would teach the model to write our own made-up token (decided 27 Oct). The patterns are the scanner's F1 patterns:
+   - emails, except FineWeb's own example.com replacements;
+   - phone numbers: international ("+44 …"), US ("(307) 234-6765", "855-305-3903"), UK and Indian numbers that start with 0, and any number after a Tel, Fax, Phone or Mobile label;
+   - ID numbers: US social security numbers, PAN numbers, and card and Aadhaar numbers only when their check digit is valid (the Luhn test for cards, the Verhoeff test for Aadhaar), so a run of years or a product code is not taken for one;
+   - not personal data: a match inside a journal reference, an ISBN, a DOI or a run of years is left alone;
+   - a line with no letter or digit left after the removal ("Tel: … / Fax: …") is removed whole.
+
+   In code: the function `f1_spans(text)` in **Runnable code** at the end of this sheet.
+
+3. **Action:** fix. The matched text is removed; the rest of the document is kept.
+
+4. **Harm test:** proxy gold set = the 202 rows of `labels.csv` with verdict `clean` (each read in full, no disease found). The medicine changes or drops **0 of 202** of them (0.00%): **pass** against the 1% bar. On the whole pack it changes 8 of 500 documents and removes 200 of 2,442,877 characters (0.01%). The official gold set for English (owned by Data A) is not published yet; this test will be repeated on it when it is.
+
+5. **Side effects:** the medicine finds 13 of the 13 labelled cases. On the whole pack it changes 8 documents, all of them labelled F1. It misses personal data with no fixed shape: names, home addresses, and numbers written in words or grouped in an unusual way. Every phone number counts, also an organisation's (decided 24 Oct). After the removal a sentence such as "call … for details" can read oddly.
+
+## Medicine 4: B4 template and code junk
+
+1. **Disease:** B4, in 8 of the 500 labelled documents (16 labelled cases). Three examples:
+   - `3e44df6a7ddb0098` (document 43): "`page.data.shortTitle || page.data.title`"
+   - `4af5022aceeaf8b2` (document 256): "require 'nokogiri' require 'open-uri' # Get a Nokogiri::HTML:Document for the page"
+   - `ef54fd4d35956893` (document 421): "> take :: Integer -> [Integer] -> [Integer] take _  =  take n xs"
+
+2. **Medicine:** Two parts.
+   - template junk (fix): remove what a web page left unfilled: "{{ title }}", "{% if … %}", "${name}", a code expression in backticks such as "`page.data.shortTitle || page.data.title`", "NaN" or "undefined" right after ":", "=" or "$", and a line that is only "undefined", "NaN" or "null";
+   - mostly code (drop): a line is a code line when it has at least two code tokens ("::", "->", "==", "&&", "{", "}", a line ending in ";", a line starting with "import", "def", "return", "public", "$ ", "Sub", …) and at least one for every six words; a table row "|cell||cell|" is never a code line. A document whose code lines hold more than half of its characters is dropped;
+   - code snippets inside an article are kept on purpose (decided 27 Oct): tutorials and manual pages with a few lines of code are good training text, and cutting them risks removing real content.
+
+   In code: the function `b4_spans(text)` in **Runnable code** at the end of this sheet.
+
+3. **Action:** fix for template junk (the expression is removed); drop for a document that is mostly code.
+
+4. **Harm test:** proxy gold set = the 202 rows of `labels.csv` with verdict `clean` (each read in full, no disease found). The medicine changes or drops **0 of 202** of them (0.00%): **pass** against the 1% bar. On the whole pack it changes 1 of 500 documents and removes 41 of 2,442,877 characters (0.00%). The official gold set for English (owned by Data A) is not published yet; this test will be repeated on it when it is.
+
+5. **Side effects:** the medicine finds 1 of the 16 labelled cases. On the whole pack it changes 1 document. The mostly-code part drops no document of this pack: the most code-like one (document 10) has code in only 3% of its text. The other B4 documents are articles with a code snippet (a Visual Basic or Java listing, a Ruby example, a command manual page, a Haskell mailing-list post), kept on purpose; the readers' labels remain the record of them. Code flattened into a prose line by the original crawl is hard to tell from prose with symbols, which is why the drop needs more than half of the document to be code.
+
+## Medicine 5: D3 mixed language
+
+1. **Disease:** D3, in 6 of the 500 labelled documents (27 labelled cases). Three examples:
+   - `f9c53a41965da2a5` (document 164): "Да ти се чува името само за добро"
+   - `c7a02c529ace1f12` (document 380): "ἄνθρωπος :: ἄνθρωποι, πρῶτος :: πρῶτοι"
+   - `00909b0fd14585fc` (document 237): "el caramelo se le deshizo / se le disolvió en la boca"
+
+2. **Medicine:** Keep: nothing is removed. DISEASES.md says mixed language can be natural and is to be labelled, not judged, and every labelled case in this pack is on purpose (proverbs with their translation, Greek grammar, Spanish example phrases, Indonesian course slides, Chinese calendar names in an infobox). The medicine only flags passages for a reader:
+   - a run of at least three words in one alphabet other than Latin (Cyrillic, Greek, Arabic, Devanagari, …);
+   - for alphabets written without spaces (Chinese, Japanese, Thai), a run of at least four characters;
+   - a word that mixes alphabets ("α-helix") is not flagged: that is A6, not D3.
+
+   In code: the function `d3_flags(text)` in **Runnable code** at the end of this sheet.
+
+3. **Action:** keep. Nothing is removed; the flags are for a reader.
+
+4. **Harm test:** proxy gold set = the 202 rows of `labels.csv` with verdict `clean` (each read in full, no disease found). The medicine changes or drops **0 of 202** of them (0.00%): **pass** against the 1% bar. On the whole pack it changes 0 of 500 documents and removes 0 of 2,442,877 characters (0.00%). The official gold set for English (owned by Data A) is not published yet; this test will be repeated on it when it is.
+
+5. **Side effects:** the medicine flags 25 of the 27 labelled cases. It cannot see mixed language in the Latin alphabet (the Spanish and Indonesian cases), which only reading finds. Removing nothing is deliberate: every labelled case is part of its article. It also flags document 356, which is not labelled D3 (in document 356 the flag is invisible Hangul filler characters, A1 junk, not language).
+
+## Test on unseen documents
+
+On 2026-10-25, before documents 151–500 were labelled, the medicines' predictions for them were saved (`frozen_predictions.json`; C1 scorer trained on the first 150 documents, threshold 0.97). Comparing them with the labels made afterwards (`frozen_test.py`):
+
+- **C1 caught:** 174 of 454 labelled C1 lines (38.3%).
+- **C1 precision:** 169 of the 178 lines it removed were labelled C1 (94.9%).
+- **Clean documents changed:** 1 of 143 (0.7%): documents 457.
+- **C3:** found in 0 of the 7 documents labelled C3.
+- **Blind documents** (every 10th, labelled without seeing any suggestion; the fully independent test): 17 of 47 C1 lines caught (36.2%), 17 of 20 removed lines labelled C1 (85.0%), 0 of 17 clean documents changed.
+
+In the other documents the reader saw the predictions as suggestions while labelling, so agreement there is partly their influence. The medicine above was retrained on all labelled documents after this test.
 
 ## Runnable code
 
-Both medicines in one self-contained Python file: copy it into `medicine_standalone.py` and it runs with the standard library alone (no numpy, no other files). It is generated from the code and the trained weights that were tested above, and it gives the same result as that code on all 500 documents of the pack (0 differences, checked by `standalone.py`).
+All the medicines in one self-contained Python file: copy it into `medicine_standalone.py` and it runs with the standard library alone (no numpy, no other files). It is generated from the code and the trained weights that were tested above, and it gives the same result as that code on all 500 documents of the pack (0 differences, checked by `standalone.py`).
 
 How to use it:
 
@@ -62,11 +136,13 @@ c3 = c3_spans(text)                  # what C3 removes
 To score a single line: `lines, X = line_features(text)` gives every line with its 20 features, and `line_score(x)` gives its score from 0 to 1. A line is removed by the scorer only if the score is at least `THRESHOLD`, the line has at most 200 characters and `gate_signal(line)` is true.
 
 ```python
-"""C1 (boilerplate) and C3 (truncated document) medicines for en-fineweb-edu. Self-contained: needs only the
-Python standard library. Usage: cleaned_text, action = clean(text)
+"""The medicines for en-fineweb-edu: C1 (boilerplate), C3 (truncated document), F1 (personal data), B4
+(template and code junk) and D3 (mixed language: flags only). Self-contained: needs only the Python
+standard library. Usage: cleaned_text, action = clean(text)
 """
 import math
 import re
+import unicodedata
 
 # ----- C1 phrase rules -----
 SHORT = 120
@@ -95,30 +171,30 @@ END_PUNCT = '!").?’”'
 
 # ----- C1 line scorer: trained weights (c1tune.py, 25 Oct) -----
 THRESHOLD = 0.97
-B = -3.0300901064718957
+B = -1.5507480049898266
 # (weight, mean, standard deviation) for each feature, in the order of FEATURES
 FEATURES = ['short_60', 'short_120', 'log_length', 'ends_sentence', 'first_3', 'last_3', 'rel_position', 'link_words', 'url', 'copyright', 'date', 'separators', 'capitalised', 'bullet', 'byline_start', 'repeated_docs', 'digits', 'few_words', 'next_is_paragraph', 'prev_is_paragraph']
 WEIGHTS = [
-    (-0.30069947477267067, 0.2542372881355932, 0.43543161383610707),  # short_60
-    (0.3705660753723984, 0.41460234680573665, 0.4926532673333473),  # short_120
-    (-1.3633854117995294, 4.973915804006418, 1.1158612815504103),  # log_length
-    (-0.4767146479133662, 0.7340286831812256, 0.44184904247057094),  # ends_sentence
-    (1.1036742053572959, 0.26988265971316816, 0.4438986490034759),  # first_3
-    (1.7910747321417884, 0.288135593220339, 0.4528945506911009),  # last_3
-    (-0.3419316526454081, 0.5102084982135137, 0.336970341150049),  # rel_position
-    (1.0158531038667535, 0.09908735332464146, 0.347217213837886),  # link_words
-    (0.0984650911683374, 0.00651890482398957, 0.0804761384811526),  # url
-    (0.08784538269706771, 0.01303780964797914, 0.1134364376839954),  # copyright
-    (-0.250628100332234, 0.0938722294654498, 0.2916508779070208),  # date
-    (0.7449039958376682, 0.04302477183833116, 0.42963885745314495),  # separators
-    (1.0268636332746048, 0.19286363562093278, 0.22020155725876003),  # capitalised
-    (-0.28936205508947666, 0.20208604954367665, 0.4015560719583507),  # bullet
-    (1.0346790652206754, 0.01955671447196871, 0.138471114922833),  # byline_start
-    (0.0, 0.0, 1e-09),  # repeated_docs
-    (1.154775046239996, 0.010813355752272085, 0.034804250997227164),  # digits
-    (-0.38352276417640513, 0.06779661016949153, 0.2513965598845974),  # few_words
-    (-1.1926348206232442, 0.4198174706649283, 0.49352888768185316),  # next_is_paragraph
-    (0.04584941941124311, 0.4380704041720991, 0.4961499029052537),  # prev_is_paragraph
+    (-0.30147706176797767, 0.34978991596638653, 0.4769034824871978),  # short_60
+    (0.06330518850698173, 0.5189075630252101, 0.4996423771656242),  # short_120
+    (-1.0656012937788908, 4.7404142964275575, 1.1558346577519014),  # log_length
+    (-0.3355137904314126, 0.6646533613445378, 0.4721115032936311),  # ends_sentence
+    (0.6530189039369719, 0.1951155462184874, 0.39628962973426646),  # first_3
+    (0.7681479054606566, 0.22163865546218486, 0.4153492057267116),  # last_3
+    (0.20484508311329477, 0.5134065615572345, 0.326095004751047),  # rel_position
+    (0.6020056915946318, 0.08403361344537816, 0.34111980628726096),  # link_words
+    (0.34674133673120544, 0.01365546218487395, 0.11605598118797099),  # url
+    (0.21358949882641426, 0.010766806722689076, 0.103203114304226),  # copyright
+    (0.39027972267177646, 0.09243697478991597, 0.2896418151111693),  # date
+    (1.1117791213605204, 0.03571428571428571, 0.3472365619951357),  # separators
+    (0.8316447868841712, 0.22243452191582483, 0.2374418810653674),  # capitalised
+    (-0.26558805523900925, 0.22006302521008403, 0.4142888979613596),  # bullet
+    (0.6554049595691624, 0.011029411764705883, 0.10444024152457473),  # byline_start
+    (0.2809341884722034, 0.004732622556344163, 0.07264101150947193),  # repeated_docs
+    (0.5335299651420944, 0.014400859555666128, 0.04813878573134519),  # digits
+    (-0.1330440782326233, 0.07589285714285714, 0.26482660724934853),  # few_words
+    (-0.5184152439383056, 0.3434873949579832, 0.47487240961410254),  # next_is_paragraph
+    (0.004603588072813513, 0.3542542016806723, 0.4782866956427239),  # prev_is_paragraph
 ]
 MAX_LINE = 200
 MAX_SHARE = 0.2
@@ -127,6 +203,189 @@ EXPAND_FACTOR = 0.5
 
 # ----- C3 -----
 DANGLING = ['a', 'about', 'an', 'and', 'are', 'as', 'at', 'be', 'because', 'been', 'but', 'by', 'can', 'could', 'for', 'from', 'had', 'has', 'have', 'he', 'her', 'his', 'i', 'if', 'in', 'including', 'into', 'is', 'it', 'its', 'more', 'most', 'not', 'of', 'on', 'or', 'our', 'see', 'she', 'such', 'than', 'that', 'the', 'their', 'these', 'they', 'this', 'those', 'to', 'very', 'visit', 'was', 'we', 'were', 'when', 'which', 'while', 'who', 'whose', 'will', 'with', 'would', 'you', 'your']
+
+
+# ----- F1 personal data -----------------------------------------------------------------------------------
+# The scanner's F1 patterns (dictionaries.py, 24 Oct). (kind, pattern, check): check is the check-digit test an ID
+# number must pass. A labelled number ("Tel: 0123 456 789") is removed together with its label.
+F1_PATTERNS = [
+    ("email", re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}"), None),
+    ("labelled-number", re.compile(r"(?i)\b(?:tel|telephone|phone|fax|mobile|mob|cell)\b\.?\s*(?:no\.?\s*)?:?\s*"
+                                   r"[+(]?\d[\d ().-]{5,}\d"), None),
+    ("phone", re.compile(r"\+\d[\d\s().-]{7,18}\d"), None),
+    ("phone", re.compile(r"\(\d{3}\)\s?\d{3}[-.\s]\d{4}\b"), None),
+    ("phone", re.compile(r"\b\d{3}[-.\s]\d{3}[-.\s]\d{4}\b"), None),
+    ("phone", re.compile(r"\b0\d{2,4}[\s-]?\d{3,4}[\s-]?\d{3,4}\b"), None),
+    ("us-ssn", re.compile(r"\b\d{3}-\d{2}-\d{4}\b"), None),
+    ("card", re.compile(r"\b(?:\d[ -]?){12,18}\d\b"), "luhn"),
+    ("aadhaar", re.compile(r"\b\d{4}\s\d{4}\s\d{4}\b"), "verhoeff"),
+    ("pan", re.compile(r"\b[A-Z]{5}\d{4}[A-Z]\b"), None),
+]
+F1_EMAIL_SKIP = ("example.com", "example.org", "example.net")  # FineWeb's own replacements, not personal data
+# A match that overlaps one of these is not personal data: journal reference, ISBN, DOI, run of years
+F1_NOT = [
+    re.compile(r"\d+\s*\(\d+\)\s*:\s*\d+\s*[-–]\s*\d+"),
+    re.compile(r"(?i)\bISBN(?:-1[03])?:?\s*[\dXx-]{10,17}|\b97[89]-\d{1,5}-\d{1,7}-\d{1,7}-[\dXx]\b"),
+    re.compile(r"\b10\.\d{4,9}/\S+"),
+    re.compile(r"\b(?:1[89]|20)\d{2}(?:\s+(?:1[89]|20)\d{2}){2,}\b"),
+]
+
+_VERHOEFF_D = [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], [1, 2, 3, 4, 0, 6, 7, 8, 9, 5], [2, 3, 4, 0, 1, 7, 8, 9, 5, 6],
+               [3, 4, 0, 1, 2, 8, 9, 5, 6, 7], [4, 0, 1, 2, 3, 9, 5, 6, 7, 8], [5, 9, 8, 7, 6, 0, 4, 3, 2, 1],
+               [6, 5, 9, 8, 7, 1, 0, 4, 3, 2], [7, 6, 5, 9, 8, 2, 1, 0, 4, 3], [8, 7, 6, 5, 9, 3, 2, 1, 0, 4],
+               [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]]
+_VERHOEFF_P = [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], [1, 5, 7, 6, 2, 8, 3, 0, 9, 4], [5, 8, 0, 3, 7, 9, 6, 1, 4, 2],
+               [8, 9, 1, 6, 0, 4, 3, 5, 2, 7], [9, 4, 5, 3, 1, 2, 6, 8, 7, 0], [4, 2, 8, 6, 5, 7, 3, 9, 0, 1],
+               [2, 7, 9, 3, 8, 0, 6, 4, 1, 5], [7, 0, 4, 6, 9, 1, 3, 2, 5, 8]]
+
+
+def _luhn(digits):
+    """The check-digit test of payment card numbers."""
+    total = 0
+    for k, ch in enumerate(reversed(digits)):
+        d = int(ch)
+        if k % 2:
+            d = d * 2 - 9 if d > 4 else d * 2
+        total += d
+    return total % 10 == 0
+
+
+def _verhoeff(digits):
+    """The check-digit test of Aadhaar numbers (the first digit is never 0 or 1)."""
+    if digits[:1] in ("0", "1"):
+        return False
+    c = 0
+    for k, ch in enumerate(reversed(digits)):
+        c = _VERHOEFF_D[c][_VERHOEFF_P[k % 8][int(ch)]]
+    return c == 0
+
+
+def _merge(spans):
+    """Overlapping spans joined into one, keeping the rule of the first."""
+    out = []
+    for s, e, rule in sorted(spans):
+        if out and s <= out[-1][1]:
+            out[-1] = (out[-1][0], max(e, out[-1][1]), out[-1][2])
+        else:
+            out.append((s, e, rule))
+    return out
+
+
+def f1_spans(text):
+    """F1: every email, phone number or ID number, removed with its label. A line left with no letter or digit
+    after the removal ("Tel: … / Fax: …") is removed whole."""
+    not_personal = [m.span() for rx in F1_NOT for m in rx.finditer(text)]
+    spans = []
+    for kind, rx, check in F1_PATTERNS:
+        for m in rx.finditer(text):
+            s, e = m.span()
+            if kind == "email":
+                if m.group(0).lower().endswith(F1_EMAIL_SKIP):
+                    continue
+            elif any(s < b and a < e for a, b in not_personal):
+                continue
+            digits = re.sub(r"\D", "", m.group(0))
+            if check == "luhn" and not _luhn(digits) or check == "verhoeff" and not _verhoeff(digits):
+                continue
+            spans.append((s, e, "F1-" + kind))
+    spans = _merge(spans)
+    out = []
+    for s, e, rule in spans:
+        ls = text.rfind("\n", 0, s) + 1
+        le = text.find("\n", e)
+        le = len(text) if le < 0 else le
+        rest = text[ls:s] + text[e:le]
+        for s2, e2, _ in spans:  # other values on the same line go too
+            if ls <= s2 and e2 <= le and (s2, e2) != (s, e):
+                rest = rest.replace(text[s2:e2], "")
+        out.append((ls, le, rule) if not re.search(r"[^\W_]", rest) else (s, e, rule))
+    return _merge(out)
+
+
+# ----- B4 template and code junk ------------------------------------------------------------------------------
+# Part 1, fix: template expressions left in the text by a web page that was not filled in.
+B4_TEMPLATE = re.compile(
+    r"\{\{[^{}\n]{0,80}\}\}"                          # {{ title }}
+    r"|\{%[^\n]{0,80}?%\}"                            # {% if x %}
+    r"|\$\{[^{}\n]{0,80}\}"                           # ${name}
+    r"|`[\w.]+(?:\s*(?:\|\||&&)\s*[\w.]+)+`"          # `page.data.shortTitle || page.data.title`
+    r"|(?<=[:=$])\s*(?:undefined|NaN)\b"              # Price: NaN, name=undefined
+    r"|^[ \t]*(?:undefined|NaN|null)[ \t]*$", re.M)   # a line that is only "undefined"
+# Part 2, drop: a document that is mostly code. A line is a code line when it carries at least B4_MIN_TOKENS code
+# tokens and at least one for every B4_WORDS_PER_TOKEN words. The document is dropped when code lines hold more than
+# B4_SHARE of its characters. Code in this pack is often flattened onto one line, so tokens are counted, not lines.
+B4_CODE_TOKENS = re.compile(
+    r"::|->|=>|==|!=|<=|>=|&&|\|\||\+\+|\+=|-=|\);|\)\s*\{|[{};]\s*$|\}"
+    r"|^\s*(?:#include|import\s|from\s+\S+\s+import|def\s|class\s|public\s|private\s|static\s|void\s|return\b"
+    r"|require\s|var\s|let\s|const\s|function\b|Sub\s|End Sub|Dim\s|\$\s|>>>\s|>\s)"
+    r"|\b(?:End Sub|ByVal|As Integer|System\.out|printf|println)\b", re.M)
+B4_MIN_TOKENS, B4_WORDS_PER_TOKEN, B4_SHARE = 2, 6, 0.5
+TABLE_ROW = re.compile(r"^\s*\|.*\|\|")  # "|cell||cell|": a flattened table, not code
+
+
+def b4_code_lines(text):
+    """(start, end) of every line that looks like code."""
+    out, pos = [], 0
+    for line in text.split("\n"):
+        tokens = len(B4_CODE_TOKENS.findall(line))
+        words = len(line.split())
+        if tokens >= B4_MIN_TOKENS and tokens * B4_WORDS_PER_TOKEN >= words and not TABLE_ROW.match(line):
+            out.append((pos, pos + len(line)))
+        pos += len(line) + 1
+    return out
+
+
+def b4_spans(text):
+    """B4: the document is dropped if it is mostly code; otherwise template expressions are removed."""
+    code = sum(e - s for s, e in b4_code_lines(text))
+    if text.strip() and code > B4_SHARE * len(text.strip()):
+        return [(0, len(text), "B4-mostly-code")]
+    return [(m.start(), m.end(), "B4-template") for m in B4_TEMPLATE.finditer(text)]
+
+
+# ----- D3 mixed language ---------------------------------------------------------------------------------------
+# Keep: nothing is removed. d3_flags() lists passages in another alphabet so a reader can look at them.
+D3_MIN_WORDS = 3      # words in a row in one other alphabet
+D3_MIN_CHARS = 4      # or, for scripts written without spaces (Chinese, Japanese), characters in a row
+_NO_SPACES = {"CJK", "HIRAGANA", "KATAKANA", "THAI"}
+
+
+def _script(ch):
+    """The alphabet of a letter: the first word of its Unicode name (LATIN, CYRILLIC, GREEK, CJK, …)."""
+    name = unicodedata.name(ch, "")
+    return name.split(" ")[0] if name else ""
+
+
+def _word_script(word):
+    scripts = {_script(ch) for ch in word if ch.isalpha()}
+    return scripts.pop() if len(scripts) == 1 else ""
+
+
+def d3_flags(text):
+    """(start, end, script) of every run of words in one alphabet other than Latin."""
+    flags, run = [], []
+    for m in re.finditer(r"\S+", text):
+        sc = _word_script(m.group(0))
+        if run and sc != run[0][2]:
+            flags += _close(run)
+            run = []
+        if sc and sc != "LATIN":
+            run.append((m.start(), m.end(), sc))
+    return flags + _close(run)
+
+
+def _close(run):
+    if not run:
+        return []
+    letters = sum(1 for s, e, _ in run for _ in range(e - s))
+    if len(run) >= D3_MIN_WORDS or run[0][2] in _NO_SPACES and letters >= D3_MIN_CHARS:
+        return [(run[0][0], run[-1][1], run[0][2])]
+    return []
+
+
+def d3_spans(text):
+    """D3: keep. Mixed language is natural; nothing is removed."""
+    return []
 
 # ----- helpers -----------------------------------------------------------------------------------------
 
@@ -273,14 +532,18 @@ def c3_spans(text, repetition=None):
 # ----- use ---------------------------------------------------------------------------------------------------
 
 def clean(text, repetition=None):
-    """Apply both medicines. Returns (cleaned text, action) where action is "keep", "fix" or "drop"."""
+    """Apply all the medicines. Returns (cleaned text, action) where action is "keep", "fix" or "drop".
+    D3 removes nothing: d3_flags(text) only points a reader at passages in another alphabet."""
     spans, flagged = c1_spans(text, repetition)
     if flagged:
         return "", "drop"
-    spans = spans + c3_spans(text, repetition)
+    b4 = b4_spans(text)
+    if b4 and b4[0][2] == "B4-mostly-code":
+        return "", "drop"
+    spans = spans + c3_spans(text, repetition) + f1_spans(text) + b4
     if not spans:
         return text, "keep"
-    for s, e in sorted({(s, e) for s, e, _ in spans}, reverse=True):
+    for s, e, _ in reversed(_merge(spans)):  # overlapping spans joined, later ones first so offsets stay valid
         text = text[:s] + text[e:]
     return text, "fix"
 

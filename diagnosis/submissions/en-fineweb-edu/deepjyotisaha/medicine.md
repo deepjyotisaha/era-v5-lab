@@ -15,7 +15,7 @@ Written from all 500 documents of the pack. Every number below is produced by `m
    - credits, sources and footers: a line that starts with "©", "Copyright", "Source:", "Article source:", "Website:", "Courtesy:", "Photo:", "Image:", "Editor's note:", "Editor:" or "Correction";
    - navigation: a breadcrumb or menu line of four or more items joined by " | ", " : " or " » " (under 160 characters), and link boxes such as "|… »||… »|";
    - shop and promotion text (under 220 characters): book details ("Paperback:", "Publisher:", "ISBN-13:", "Product dimensions:"), order confirmations, "Help support … and get …", "Don't forget to check out …", "click on the … to follow me", "Subscribe to our newsletter".
-   - line scorer: every line also gets a score from 0 to 1 from a logistic regression trained on the labels (positive: the labelled C1 lines; negative: every line of the documents labelled clean). Its features are what boilerplate lines share whatever their words: length, a full stop at the end, position (first or last three lines), link words, web address, ©, date, separators, share of capitalised words, digits, whether a paragraph follows, and how many other documents repeat the line. A line scoring 0.97 or more is removed, but only if it is at most 200 characters and carries an explicit boilerplate signal (link word, web address, ©, date, byline or separator), so an article title or an ordinary sentence is never removed on its score alone;
+   - line scorer: every line also gets a score from 0 to 1 from a logistic regression trained on the labels (positive: the labelled C1 lines; negative: every line of the documents labelled clean). Its features are what boilerplate lines share whatever their words: length, a full stop at the end, position (first or last three lines), link words, web address, ©, date, separators, share of capitalised words, digits, whether a paragraph follows, and how many other documents repeat the line. A line scoring 0.97 or more is removed, but only if it is at most 200 characters and carries an explicit boilerplate signal (link word, web address, ©, date, byline or separator; from 27 Oct also a line found in 3 or more documents of the pack, and "Back to …", "Photo credit", "Contributors:", "Last reviewed", "Article ID:", "community guidelines", "customer reviews"), so an article title or an ordinary sentence is never removed on its score alone. A lower threshold for the first and last three lines was tested on 27 Oct and rejected: it changed more clean documents (a dateline, a closing reference);
    - block expansion: a line next to a removed line is removed too if it is short, has no full stop, scores at least half the threshold, and is signalled or a "Key: value" line (the rest of a byline or of a book-details block);
    - a teaser glued to the end of a sentence ("…can be prescribed.Learn more about …") removes only the teaser, never the sentence;
    - guard: if all of this would remove more than 20% of a document and more than 300 characters, nothing is cut and the document is flagged for drop (so a normal footer on a short page is cut, not turned into a drop). The threshold 0.97 is the one that catches the most labelled lines while changing at most 1% of the clean documents, in a five-fold test on documents the scorer did not see during training (`c1tune.py`).
@@ -24,9 +24,9 @@ Written from all 500 documents of the pack. Every number below is produced by `m
 
 3. **Action:** fix. The matched text is removed; the rest of the document is kept. A document the guard flags is dropped.
 
-4. **Harm test:** proxy gold set = the 202 rows of `labels.csv` with verdict `clean` (each read in full, no disease found). The medicine changes or drops **2 of 202** of them (0.99%, each tested by a scorer that had not seen it): **pass** against the 1% bar. On the whole pack it changes 145 of 500 documents and removes 15,944 of 2,442,877 characters (0.65%). The official gold set for English (owned by Data A) is not published yet; this test will be repeated on it when it is.
+4. **Harm test:** proxy gold set = the 202 rows of `labels.csv` with verdict `clean` (each read in full, no disease found). The medicine changes or drops **2 of 202** of them (0.99%, each tested by a scorer that had not seen it): **pass** against the 1% bar. On the whole pack it changes 153 of 500 documents and removes 16,704 of 2,442,877 characters (0.68%). The official gold set for English (owned by Data A) is not published yet; this test will be repeated on it when it is.
 
-5. **Side effects:** on documents the scorer had not seen, the medicine finds 212 of the 540 labelled C1 lines (39%; the phrase rules alone find 117). It misses C1 that has no fixed wording and no boilerplate signal: one-off site headings ("Programs for children", "Chapter 02 Worksheet"), reference lists and citations, catalogue records and promotion inside a long paragraph. These are left to the readers. Article titles are kept on purpose: the first version of the scorer removed titles and sentences such as "By the end of 1992, …" from clean documents, which is why the scorer may only remove signalled lines. Remaining risks: a "Source:" line under a chart, and a short line with a date or a link word that belongs to the article.
+5. **Side effects:** on documents the scorer had not seen, the medicine finds 229 of the 540 labelled C1 lines (42%; the phrase rules alone find 117). It misses C1 that has no fixed wording and no boilerplate signal: one-off site headings ("Programs for children", "Chapter 02 Worksheet"), reference lists and citations, catalogue records and promotion inside a long paragraph. These are left to the readers. Article titles are kept on purpose: the first version of the scorer removed titles and sentences such as "By the end of 1992, …" from clean documents, which is why the scorer may only remove signalled lines. Remaining risks: a "Source:" line under a chart, and a short line with a date or a link word that belongs to the article.
 
 ## Medicine 2: C3 truncated document
 
@@ -121,19 +121,27 @@ In the other documents the reader saw the predictions as suggestions while label
 
 ## Runnable code
 
-All the medicines in one self-contained Python file: copy it into `medicine_standalone.py` and it runs with the standard library alone (no numpy, no other files). It is generated from the code and the trained weights that were tested above, and it gives the same result as that code on all 500 documents of the pack (0 differences, checked by `standalone.py`).
+All the medicines in one self-contained Python file: copy it into `medicine_standalone.py` and it runs with the standard library alone (no numpy, no other files). It is generated from the code and the trained weights that were tested above, and it gives the same result as that code on all 500 documents of the pack (0 differences, checked by `standalone.py`), when it is given the pack's line-repetition counts (below). Without them, C1 gives a different result on 7 of the 500 documents, because it cannot tell which lines repeat across the pack.
 
 How to use it:
 
 ```python
-from medicine_standalone import clean, c1_spans, c3_spans
+from medicine_standalone import clean, c1_spans, c3_spans, f1_spans, b4_spans, d3_flags, _norm
 
-cleaned, action = clean(text)        # action: "keep", "fix" or "drop"
-spans, flagged = c1_spans(text)      # what C1 removes: (start, end, rule); flagged = drop
-c3 = c3_spans(text)                  # what C3 removes
+# how many documents of the pack contain each line (the scorer and the gate use it)
+repetition = {}
+for doc in texts:
+    for line in {_norm(l) for l in doc.split("\n") if l.strip()}:
+        repetition[line] = repetition.get(line, 0) + 1
+
+cleaned, action = clean(text, repetition)   # action: "keep", "fix" or "drop"
+spans, flagged = c1_spans(text, repetition) # what C1 removes: (start, end, rule); flagged = drop
+c3 = c3_spans(text, repetition)             # what C3 removes
+f1, b4 = f1_spans(text), b4_spans(text)     # what F1 and B4 remove
+flags = d3_flags(text)                      # D3: passages in another alphabet (nothing removed)
 ```
 
-To score a single line: `lines, X = line_features(text)` gives every line with its 20 features, and `line_score(x)` gives its score from 0 to 1. A line is removed by the scorer only if the score is at least `THRESHOLD`, the line has at most 200 characters and `gate_signal(line)` is true.
+To score a single line: `lines, X = line_features(text, repetition)` gives every line with its 20 features, and `line_score(x)` gives its score from 0 to 1. A line is removed by the scorer only if the score is at least `THRESHOLD`, the line has at most 200 characters and `_signal(line, repetition)` is true.
 
 ```python
 """The medicines for en-fineweb-edu: C1 (boilerplate), C3 (truncated document), F1 (personal data), B4
@@ -167,6 +175,8 @@ BYLINE = re.compile("^(?:[Bb]y\\s+[A-Z][\\w.'-]+(?:\\s+[A-Z][\\w.'-]+)*(?:,|$)|(
 KEY_VALUE = re.compile('^[-•*]?\\s*[A-Z][\\w -]{1,25}:\\s+\\S')
 FULL_DATE = re.compile('(?i)\\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\\.?\\s+\\d{1,2},?\\s+\\d{4}\\b|\\b\\d{1,2}\\s+(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\\s+\\d{4}\\b|\\b\\d{1,2}/\\d{1,2}/\\d{2,4}\\b')
 MENU_SEP = re.compile('[A-Za-z]\\s(?:\\||»|:)\\s[A-Za-z]|»')
+GATE_WORDS = re.compile('(?i)^back to\\b|\\bphoto credit|^contributors?:|^last (?:reviewed|updated)\\b|^article id:|community guidelines|customer reviews')
+GATE_REPEAT = 3
 END_PUNCT = '!").?’”'
 
 # ----- C1 line scorer: trained weights (c1tune.py, 25 Oct) -----
@@ -479,8 +489,16 @@ def gate_signal(line):
                 or BYLINE.match(line) or MENU_SEP.search(line))
 
 
+def _signal(line, repetition):
+    """gate_signal, plus the gate additions of 27 Oct: GATE_WORDS, and a line found in GATE_REPEAT or more
+    documents of the pack (needs the pack's repetition counts; without them this part never fires)."""
+    return (gate_signal(line) or bool(GATE_WORDS.search(line))
+            or repetition.get(_norm(line), 1) >= GATE_REPEAT)
+
+
 def c1_spans(text, repetition=None):
     """The C1 medicine. Returns (spans to remove, flagged_for_drop)."""
+    rep = repetition or {}
     phrase = c1_phrase_spans(text)
     phrase_hits = {s for s, _, _ in phrase}
     lines, X = line_features(text, repetition)
@@ -489,7 +507,7 @@ def c1_spans(text, repetition=None):
               if any(o <= a < o + len(s) for a, _, r in phrase if r == "C1-teaser-inline")}
     remove = {k for k, (off, s) in enumerate(lines) if off in phrase_hits}
     remove |= {k for k, sc in enumerate(scores)
-               if sc >= THRESHOLD and len(lines[k][1]) <= MAX_LINE and gate_signal(lines[k][1]) and k not in inline}
+               if sc >= THRESHOLD and len(lines[k][1]) <= MAX_LINE and _signal(lines[k][1], rep) and k not in inline}
     changed = True
     while changed:                          # block expansion
         changed = False
@@ -497,7 +515,7 @@ def c1_spans(text, repetition=None):
             for j in (k - 1, k + 1):
                 if 0 <= j < len(lines) and j not in remove and j not in inline and len(lines[j][1]) <= 120 \
                         and lines[j][1][-1] not in END_PUNCT and scores[j] >= EXPAND_FACTOR * THRESHOLD \
-                        and (gate_signal(lines[j][1]) or KEY_VALUE.match(lines[j][1])):
+                        and (_signal(lines[j][1], rep) or KEY_VALUE.match(lines[j][1])):
                     remove.add(j)
                     changed = True
     spans = [(lines[k][0], lines[k][0] + len(lines[k][1]), "C1-phrase" if lines[k][0] in phrase_hits else

@@ -1,13 +1,13 @@
 # Medicine sheet: en-fineweb-edu (deepjyotisaha)
 
-Written from all 500 documents of the pack. Every number below is produced by `medicine.py`, which runs each rule against the labels in `labels.csv` and against the whole pack. Diseases found in more than five documents: **C1** (277), **C3** (13), **B4** (8), **F1** (8), **D3** (6).
+Written from all 500 documents of the pack. Every number below is produced by `medicine.py`, which runs each rule against the labels in `labels.csv` and against the whole pack. Diseases found in more than five documents: **C1** (277), **C3** (13), **B4** (8), **F1** (8). D3 is in 5 documents, so it needs no medicine; its tested rule stays in the runnable code.
 
 ## Medicine 1: C1 boilerplate
 
 1. **Disease:** C1, in 277 of the 500 labelled documents (592 labelled cases). Three examples:
    - `74ea30694d60f739` (document 13): "© 1995-2017 Bible History Online"
    - `f6393483c601faf0` (document 22): "View all Kids Bikes"
-   - `1e5e295e77f6c38e` (document 45): "By Kevin Schargen"
+   - `96dfcd8dcd7a0cff` (document 393): "Back to top"
 
 2. **Medicine:** Remove a line, or the end of a line, when it is website text rather than article text. Five kinds, each with its own pattern (all case-insensitive, lines under 120 characters unless stated):
    - teaser and action links: a line that starts with "Read more", "Continue reading", "Explore further", "Click here", "Learn more about", "To learn more about", "Find out more", "For further information", "View all", "View larger map", "Show summary details", "Share this", "Choose a citation style" or "Call now"; and a teaser such as "[...] Read more", "Continue reading →" or "Read more »" at the end of a longer line (only the teaser is removed);
@@ -86,26 +86,6 @@ Written from all 500 documents of the pack. Every number below is produced by `m
 4. **Harm test:** proxy gold set = the 202 rows of `labels.csv` with verdict `clean` (each read in full, no disease found). The medicine changes or drops **0 of 202** of them (0.00%): **pass** against the 1% bar. On the whole pack it changes 1 of 500 documents and removes 41 of 2,442,877 characters (0.00%). The official gold set for English (owned by Data A) is not published yet; this test will be repeated on it when it is.
 
 5. **Side effects:** the medicine finds 1 of the 16 labelled cases. On the whole pack it changes 1 document. The mostly-code part drops no document of this pack: the most code-like one (document 10) has code in only 3% of its text. The other B4 documents are articles with a code snippet (a Visual Basic or Java listing, a Ruby example, a command manual page, a Haskell mailing-list post), kept on purpose; the readers' labels remain the record of them. Code flattened into a prose line by the original crawl is hard to tell from prose with symbols, which is why the drop needs more than half of the document to be code.
-
-## Medicine 5: D3 mixed language
-
-1. **Disease:** D3, in 6 of the 500 labelled documents (27 labelled cases). Three examples:
-   - `f9c53a41965da2a5` (document 164): "Да ти се чува името само за добро"
-   - `c7a02c529ace1f12` (document 380): "ἄνθρωπος :: ἄνθρωποι, πρῶτος :: πρῶτοι"
-   - `00909b0fd14585fc` (document 237): "el caramelo se le deshizo / se le disolvió en la boca"
-
-2. **Medicine:** Keep: nothing is removed. DISEASES.md says mixed language can be natural and is to be labelled, not judged, and every labelled case in this pack is on purpose (proverbs with their translation, Greek grammar, Spanish example phrases, Indonesian course slides, Chinese calendar names in an infobox). The medicine only flags passages for a reader:
-   - a run of at least three words in one alphabet other than Latin (Cyrillic, Greek, Arabic, Devanagari, …);
-   - for alphabets written without spaces (Chinese, Japanese, Thai), a run of at least four characters;
-   - a word that mixes alphabets ("α-helix") is not flagged: that is A6, not D3.
-
-   In code: the function `d3_flags(text)` in **Runnable code** at the end of this sheet.
-
-3. **Action:** keep. Nothing is removed; the flags are for a reader.
-
-4. **Harm test:** proxy gold set = the 202 rows of `labels.csv` with verdict `clean` (each read in full, no disease found). The medicine changes or drops **0 of 202** of them (0.00%): **pass** against the 1% bar. On the whole pack it changes 0 of 500 documents and removes 0 of 2,442,877 characters (0.00%). The official gold set for English (owned by Data A) is not published yet; this test will be repeated on it when it is.
-
-5. **Side effects:** the medicine flags 25 of the 27 labelled cases. It cannot see mixed language in the Latin alphabet (the Spanish and Indonesian cases), which only reading finds. Removing nothing is deliberate: every labelled case is part of its article. It also flags document 356, which is not labelled D3 (in document 356 the flag is invisible Hangul filler characters, A1 junk, not language).
 
 ## Test on unseen documents
 

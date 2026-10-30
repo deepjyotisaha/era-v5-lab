@@ -1,13 +1,10 @@
 # Medicine sheet: en-fineweb-edu (deepjyotisaha)
 
-Written from all 500 documents of the pack. Every number below is produced by `medicine.py`, which runs each rule against the labels in `labels.csv` and against the whole pack. Diseases found in more than five documents: **C1** (277), **C3** (13), **B4** (8), **F1** (8). D3 is in 5 documents, so it needs no medicine; its tested rule stays in the runnable code.
+Written from all 500 documents of the pack. Every number below is produced by `medicine.py`, which runs each rule against the labels in `labels.csv` and against the whole pack. Diseases found more than five times (in more than five documents, or in more than five labelled cases): **C1** (277 documents, 592 cases), **C3** (13 documents, 14 cases), **B4** (8 documents, 16 cases), **F1** (8 documents, 13 cases), **D3** (5 documents, 26 cases), **C5** (4 documents, 6 cases), **C2** (2 documents, 8 cases).
 
-## Medicine 1: C1 boilerplate
+## Medicine 1
 
-1. **Disease:** C1, in 277 of the 500 labelled documents (592 labelled cases). Three examples:
-   - `74ea30694d60f739` (document 13): "© 1995-2017 Bible History Online"
-   - `f6393483c601faf0` (document 22): "View all Kids Bikes"
-   - `96dfcd8dcd7a0cff` (document 393): "Back to top"
+1. **Disease:** C1 (boilerplate), count in the pack: 277 documents (592 labelled cases). Three examples: `74ea30694d60f739` "© 1995-2017 Bible History Online"; `f6393483c601faf0` "View all Kids Bikes"; `96dfcd8dcd7a0cff` "Back to top".
 
 2. **Medicine:** Remove a line, or the end of a line, when it is website text rather than article text. Five kinds, each with its own pattern (all case-insensitive, lines under 120 characters unless stated):
    - teaser and action links: a line that starts with "Read more", "Continue reading", "Explore further", "Click here", "Learn more about", "To learn more about", "Find out more", "For further information", "View all", "View larger map", "Show summary details", "Share this", "Choose a citation style" or "Call now"; and a teaser such as "[...] Read more", "Continue reading →" or "Read more »" at the end of a longer line (only the teaser is removed);
@@ -20,37 +17,108 @@ Written from all 500 documents of the pack. Every number below is produced by `m
    - a teaser glued to the end of a sentence ("…can be prescribed.Learn more about …") removes only the teaser, never the sentence;
    - guard: if all of this would remove more than 20% of a document and more than 300 characters, nothing is cut and the document is flagged for drop (so a normal footer on a short page is cut, not turned into a drop). The threshold 0.97 is the one that catches the most labelled lines while changing at most 1% of the clean documents, in a five-fold test on documents the scorer did not see during training (`c1tune.py`).
 
-   In code: the function `c1_spans(text)` in **Runnable code** at the end of this sheet.
+   In code (the function the medicine runs; the patterns, weights and helpers it uses are in Appendix B, the full runnable file):
+
+```python
+def c1_spans(text, repetition=None):
+    """The C1 medicine. Returns (spans to remove, flagged_for_drop)."""
+    rep = repetition or {}
+    phrase = c1_phrase_spans(text)
+    phrase_hits = {s for s, _, _ in phrase}
+    lines, X = line_features(text, repetition)
+    scores = [line_score(x) for x in X]
+    inline = {k for k, (o, s) in enumerate(lines)
+              if any(o <= a < o + len(s) for a, _, r in phrase if r == "C1-teaser-inline")}
+    remove = {k for k, (off, s) in enumerate(lines) if off in phrase_hits}
+    remove |= {k for k, sc in enumerate(scores)
+               if sc >= THRESHOLD and len(lines[k][1]) <= MAX_LINE and _signal(lines[k][1], rep) and k not in inline}
+    changed = True
+    while changed:                          # block expansion
+        changed = False
+        for k in sorted(remove):
+            for j in (k - 1, k + 1):
+                if 0 <= j < len(lines) and j not in remove and j not in inline and len(lines[j][1]) <= 120 \
+                        and lines[j][1][-1] not in END_PUNCT and scores[j] >= EXPAND_FACTOR * THRESHOLD \
+                        and (_signal(lines[j][1], rep) or KEY_VALUE.match(lines[j][1])):
+                    remove.add(j)
+                    changed = True
+    spans = [(lines[k][0], lines[k][0] + len(lines[k][1]), "C1-phrase" if lines[k][0] in phrase_hits else
+              "C1-scorer") for k in sorted(remove)]
+    spans += [sp for sp in phrase if sp[2] == "C1-teaser-inline"]
+    removed = len({p for s, e, _ in spans for p in range(s, e)})
+    if text and removed > MAX_SHARE * len(text) and removed > MIN_DROP_CHARS:
+        return [], True                      # too much would go: drop the document instead
+    return spans, False
+```
 
 3. **Action:** fix. The matched text is removed; the rest of the document is kept. A document the guard flags is dropped.
 
-4. **Harm test:** proxy gold set = the 202 rows of `labels.csv` with verdict `clean` (each read in full, no disease found). The medicine changes or drops **2 of 202** of them (0.99%, each tested by a scorer that had not seen it): **pass** against the 1% bar. On the whole pack it changes 153 of 500 documents and removes 16,704 of 2,442,877 characters (0.68%). The official gold set for English (owned by Data A) is not published yet; this test will be repeated on it when it is.
+4. **Harm test:** changes 2 of 202 gold documents, drops 0 of 202 gold documents (0.99% changed or dropped): **pass** against the 1% bar. The official English gold set (Data A) is not published yet, so the gold set here is a proxy: the 202 rows of `labels.csv` with verdict `clean` (each read in full, no disease found), each tested by a scorer that had not seen it. On the whole pack it changes 153 of 500 documents and removes 16,704 of 2,442,877 characters (0.68%). The test will be repeated on the gold set when it is published.
 
 5. **Side effects:** on documents the scorer had not seen, the medicine finds 229 of the 540 labelled C1 lines (42%; the phrase rules alone find 117). It misses C1 that has no fixed wording and no boilerplate signal: one-off site headings ("Programs for children", "Chapter 02 Worksheet"), reference lists and citations, catalogue records and promotion inside a long paragraph. These are left to the readers. Article titles are kept on purpose: the first version of the scorer removed titles and sentences such as "By the end of 1992, …" from clean documents, which is why the scorer may only remove signalled lines. Remaining risks: a "Source:" line under a chart, and a short line with a date or a link word that belongs to the article.
 
-## Medicine 2: C3 truncated document
+## Medicine 2
 
-1. **Disease:** C3, in 13 of the 500 labelled documents (14 labelled cases). Three examples:
-   - `2067313a5e000336` (document 5): "He writes in the Guardian on Tuesday:"
-   - `8620d74ba9ae6cdc` (document 24): "For more information about the collection, visit"
-   - `d9cf118c7cae38e0` (document 42): "week we celebrate the holiday of Chanuka."
+1. **Disease:** C3 (truncated document), count in the pack: 13 documents (14 labelled cases). Three examples: `2067313a5e000336` "He writes in the Guardian on Tuesday:"; `8620d74ba9ae6cdc` "For more information about the collection, visit"; `d9cf118c7cae38e0` "week we celebrate the holiday of Chanuka.".
 
 2. **Medicine:** Remove the last line of a document when it is an unfinished sentence: the last non-empty line has at least six words and ends on a word no complete sentence ends on (for example "the", "of", "to", "visit", "they") or on ":" or ",", and the C1 medicine does not already remove it. The document then ends at its last complete line. Run after the C1 medicine. Two broader rules were tested and rejected (25 Oct): "the last line ends with any lower-case letter" also removed titles and author notes at the end of good documents, and "the text starts with a lower-case letter" also removed dictionary entries that start in lower case. Those cases stay with the readers.
 
-   In code: the function `c3_spans(text)` in **Runnable code** at the end of this sheet.
+   In code (the function the medicine runs; the patterns, weights and helpers it uses are in Appendix B, the full runnable file):
+
+```python
+def c3_spans(text, repetition=None):
+    """The C3 medicine: remove the last line when it is an unfinished sentence and C1 does not remove it."""
+    lines = [(o, l) for o, l in _raw_lines(text) if l.strip()]
+    if not lines:
+        return []
+    off, last = lines[-1]
+    c1, flagged = c1_spans(text, repetition)
+    if flagged:
+        c1 = [(0, len(text), "C1-drop-flag")]
+    if any(s < off + len(last) and e > off for s, e, _ in c1):
+        return []
+    s = last.rstrip()
+    words = s.split()
+    if len(words) >= 6 and (s[-1] in ":," or words[-1].lower() in DANGLING):
+        return [(off, off + len(last), "C3-unfinished-end")]
+    return []
+```
 
 3. **Action:** fix. The matched text is removed; the rest of the document is kept.
 
-4. **Harm test:** proxy gold set = the 202 rows of `labels.csv` with verdict `clean` (each read in full, no disease found). The medicine changes or drops **0 of 202** of them (0.00%): **pass** against the 1% bar. On the whole pack it changes 4 of 500 documents and removes 346 of 2,442,877 characters (0.01%). The official gold set for English (owned by Data A) is not published yet; this test will be repeated on it when it is.
+4. **Harm test:** changes 0 of 202 gold documents, drops 0 of 202 gold documents (0.00% changed or dropped): **pass** against the 1% bar. The official English gold set (Data A) is not published yet, so the gold set here is a proxy: the 202 rows of `labels.csv` with verdict `clean` (each read in full, no disease found). On the whole pack it changes 4 of 500 documents and removes 346 of 2,442,877 characters (0.01%). The test will be repeated on the gold set when it is published.
 
 5. **Side effects:** the medicine finds 2 of the 14 labelled cases. It misses cut-offs that do not end on a dangling word or a colon (for example a teaser ending in "..."), and documents that start in the middle of a sentence. Some labelled cut-offs are removed by the C1 medicine first, because their last line is also a link ("…For more information about the collection, visit"). On the whole pack it changes 4 documents; checked on 25 Oct, one of them is a title ending in "On" ("The Saga Lives On"), which is a wrong removal.
 
-## Medicine 3: F1 personal data
+## Medicine 3
 
-1. **Disease:** F1, in 8 of the 500 labelled documents (13 labelled cases). Three examples:
-   - `841da1d7e68b3ab8` (document 135): "phone number at offset 1597"
-   - `6a515f44bd213b3d` (document 155): "phone number after a Tel: label at offset 7182"
-   - `e202cef6da70c403` (document 450): "phone number after a Tel: label at offset 3943"
+1. **Disease:** B4 (template and code junk), count in the pack: 8 documents (16 labelled cases). Three examples: `3e44df6a7ddb0098` "`page.data.shortTitle || page.data.title`"; `4af5022aceeaf8b2` "require 'nokogiri' require 'open-uri' # Get a Nokogiri::HTML:Document for the page"; `ef54fd4d35956893` "> take :: Integer -> [Integer] -> [Integer] take _  =  take n xs".
+
+2. **Medicine:** Two parts.
+   - template junk (fix): remove what a web page left unfilled: "{{ title }}", "{% if … %}", "${name}", a code expression in backticks such as "`page.data.shortTitle || page.data.title`", "NaN" or "undefined" right after ":", "=" or "$", and a line that is only "undefined", "NaN" or "null";
+   - mostly code (drop): a line is a code line when it has at least two code tokens ("::", "->", "==", "&&", "{", "}", a line ending in ";", a line starting with "import", "def", "return", "public", "$ ", "Sub", …) and at least one for every six words; a table row "|cell||cell|" is never a code line. A document whose code lines hold more than half of its characters is dropped;
+   - code snippets inside an article are kept on purpose (decided 27 Oct): tutorials and manual pages with a few lines of code are good training text, and cutting them risks removing real content.
+
+   In code (the function the medicine runs; the patterns, weights and helpers it uses are in Appendix B, the full runnable file):
+
+```python
+def b4_spans(text):
+    """B4: the document is dropped if it is mostly code; otherwise template expressions are removed."""
+    code = sum(e - s for s, e in b4_code_lines(text))
+    if text.strip() and code > B4_SHARE * len(text.strip()):
+        return [(0, len(text), "B4-mostly-code")]
+    return [(m.start(), m.end(), "B4-template") for m in B4_TEMPLATE.finditer(text)]
+```
+
+3. **Action:** fix for template junk (the expression is removed); drop for a document that is mostly code.
+
+4. **Harm test:** changes 0 of 202 gold documents, drops 0 of 202 gold documents (0.00% changed or dropped): **pass** against the 1% bar. The official English gold set (Data A) is not published yet, so the gold set here is a proxy: the 202 rows of `labels.csv` with verdict `clean` (each read in full, no disease found). On the whole pack it changes 1 of 500 documents and removes 41 of 2,442,877 characters (0.00%). The test will be repeated on the gold set when it is published.
+
+5. **Side effects:** the medicine finds 1 of the 16 labelled cases. On the whole pack it changes 1 document. The mostly-code part drops no document of this pack: the most code-like one (document 10) has code in only 3% of its text. The other B4 documents are articles with a code snippet (a Visual Basic or Java listing, a Ruby example, a command manual page, a Haskell mailing-list post), kept on purpose; the readers' labels remain the record of them. Code flattened into a prose line by the original crawl is hard to tell from prose with symbols, which is why the drop needs more than half of the document to be code.
+
+## Medicine 4
+
+1. **Disease:** F1 (personal data), count in the pack: 8 documents (13 labelled cases). Three examples: `841da1d7e68b3ab8` "phone number at offset 1597"; `6a515f44bd213b3d` "phone number after a Tel: label at offset 7182"; `e202cef6da70c403` "phone number after a Tel: label at offset 3943".
 
 2. **Medicine:** Remove every email address, phone number and ID number, together with a label in front of it ("Tel:", "Fax:", "Phone:"). Nothing is put in its place: a placeholder such as "[phone]" would teach the model to write our own made-up token (decided 27 Oct). The patterns are the scanner's F1 patterns:
    - emails, except FineWeb's own example.com replacements;
@@ -59,35 +127,152 @@ Written from all 500 documents of the pack. Every number below is produced by `m
    - not personal data: a match inside a journal reference, an ISBN, a DOI or a run of years is left alone;
    - a line with no letter or digit left after the removal ("Tel: … / Fax: …") is removed whole.
 
-   In code: the function `f1_spans(text)` in **Runnable code** at the end of this sheet.
+   In code (the function the medicine runs; the patterns, weights and helpers it uses are in Appendix B, the full runnable file):
+
+```python
+def f1_spans(text):
+    """F1: every email, phone number or ID number, removed with its label. A line left with no letter or digit
+    after the removal ("Tel: … / Fax: …") is removed whole."""
+    not_personal = [m.span() for rx in F1_NOT for m in rx.finditer(text)]
+    spans = []
+    for kind, rx, check in F1_PATTERNS:
+        for m in rx.finditer(text):
+            s, e = m.span()
+            if kind == "email":
+                if m.group(0).lower().endswith(F1_EMAIL_SKIP):
+                    continue
+            elif any(s < b and a < e for a, b in not_personal):
+                continue
+            digits = re.sub(r"\D", "", m.group(0))
+            if check == "luhn" and not _luhn(digits) or check == "verhoeff" and not _verhoeff(digits):
+                continue
+            spans.append((s, e, "F1-" + kind))
+    spans = _merge(spans)
+    out = []
+    for s, e, rule in spans:
+        ls = text.rfind("\n", 0, s) + 1
+        le = text.find("\n", e)
+        le = len(text) if le < 0 else le
+        rest = text[ls:s] + text[e:le]
+        for s2, e2, _ in spans:  # other values on the same line go too
+            if ls <= s2 and e2 <= le and (s2, e2) != (s, e):
+                rest = rest.replace(text[s2:e2], "")
+        out.append((ls, le, rule) if not re.search(r"[^\W_]", rest) else (s, e, rule))
+    return _merge(out)
+```
 
 3. **Action:** fix. The matched text is removed; the rest of the document is kept.
 
-4. **Harm test:** proxy gold set = the 202 rows of `labels.csv` with verdict `clean` (each read in full, no disease found). The medicine changes or drops **0 of 202** of them (0.00%): **pass** against the 1% bar. On the whole pack it changes 8 of 500 documents and removes 200 of 2,442,877 characters (0.01%). The official gold set for English (owned by Data A) is not published yet; this test will be repeated on it when it is.
+4. **Harm test:** changes 0 of 202 gold documents, drops 0 of 202 gold documents (0.00% changed or dropped): **pass** against the 1% bar. The official English gold set (Data A) is not published yet, so the gold set here is a proxy: the 202 rows of `labels.csv` with verdict `clean` (each read in full, no disease found). On the whole pack it changes 8 of 500 documents and removes 200 of 2,442,877 characters (0.01%). The test will be repeated on the gold set when it is published.
 
 5. **Side effects:** the medicine finds 13 of the 13 labelled cases. On the whole pack it changes 8 documents, all of them labelled F1. It misses personal data with no fixed shape: names, home addresses, and numbers written in words or grouped in an unusual way. Every phone number counts, also an organisation's (decided 24 Oct). After the removal a sentence such as "call … for details" can read oddly.
 
-## Medicine 4: B4 template and code junk
+## Medicine 5
 
-1. **Disease:** B4, in 8 of the 500 labelled documents (16 labelled cases). Three examples:
-   - `3e44df6a7ddb0098` (document 43): "`page.data.shortTitle || page.data.title`"
-   - `4af5022aceeaf8b2` (document 256): "require 'nokogiri' require 'open-uri' # Get a Nokogiri::HTML:Document for the page"
-   - `ef54fd4d35956893` (document 421): "> take :: Integer -> [Integer] -> [Integer] take _  =  take n xs"
+1. **Disease:** D3 (mixed language), count in the pack: 5 documents (26 labelled cases). Three examples: `f9c53a41965da2a5` "Да ти се чува името само за добро"; `c7a02c529ace1f12` "ἄνθρωπος :: ἄνθρωποι, πρῶτος :: πρῶτοι"; `5d83a600900ceb99` "Дерево, как летопись засух".
+
+2. **Medicine:** Nothing is removed. DISEASES.md says mixed language can be natural and is to be labelled, not judged, and every labelled case in this pack is on purpose (proverbs with their translation, Greek grammar, a Russian book title, Indonesian course slides, Chinese calendar names in an infobox). The medicine only flags passages for a reader:
+   - a run of at least three words in one alphabet other than Latin (Cyrillic, Greek, Arabic, Devanagari, …);
+   - for alphabets written without spaces (Chinese, Japanese, Thai), a run of at least four characters;
+   - a word that mixes alphabets ("α-helix") is not flagged: that is A6, not D3.
+
+   In code (the function the medicine runs; the patterns, weights and helpers it uses are in Appendix B, the full runnable file):
+
+```python
+def d3_flags(text):
+    """(start, end, script) of every run of words in one alphabet other than Latin."""
+    flags, run = [], []
+    for m in re.finditer(r"\S+", text):
+        sc = _word_script(m.group(0))
+        if run and sc != run[0][2]:
+            flags += _close(run)
+            run = []
+        if sc and sc != "LATIN":
+            run.append((m.start(), m.end(), sc))
+    return flags + _close(run)
+```
+
+3. **Action:** fix, with an empty fix: no text is changed and no document is dropped, because DISEASES.md says mixed language can be natural and is to be labelled, not judged. `d3_flags` only lists the passages for a reader.
+
+4. **Harm test:** changes 0 of 202 gold documents, drops 0 of 202 gold documents (0.00% changed or dropped): **pass** against the 1% bar. The official English gold set (Data A) is not published yet, so the gold set here is a proxy: the 202 rows of `labels.csv` with verdict `clean` (each read in full, no disease found). On the whole pack it changes 0 of 500 documents and removes 0 of 2,442,877 characters (0.00%). The test will be repeated on the gold set when it is published.
+
+5. **Side effects:** the medicine flags 25 of the 26 labelled cases. It cannot see mixed language in the Latin alphabet (the Indonesian case), which only reading finds. Removing nothing is deliberate: every labelled case is part of its article. It also flags document 356, which is not labelled D3 (in document 356 the flag is invisible Hangul filler characters, A1 junk, not language).
+
+## Medicine 6
+
+1. **Disease:** C5 (lists of keywords or links), count in the pack: 4 documents (6 labelled cases). Three examples: `3f4857110e68e166` "pitman shorthand grammalogues"; `baa5fe4efdc10714` "The Little Robber Girl"; `7f983f58c670ca42` "ED 250351.".
 
 2. **Medicine:** Two parts.
-   - template junk (fix): remove what a web page left unfilled: "{{ title }}", "{% if … %}", "${name}", a code expression in backticks such as "`page.data.shortTitle || page.data.title`", "NaN" or "undefined" right after ":", "=" or "$", and a line that is only "undefined", "NaN" or "null";
-   - mostly code (drop): a line is a code line when it has at least two code tokens ("::", "->", "==", "&&", "{", "}", a line ending in ";", a line starting with "import", "def", "return", "public", "$ ", "Sub", …) and at least one for every six words; a table row "|cell||cell|" is never a code line. A document whose code lines hold more than half of its characters is dropped;
-   - code snippets inside an article are kept on purpose (decided 27 Oct): tutorials and manual pages with a few lines of code are good training text, and cutting them risks removing real content.
+   - list page (drop): more than half of the non-empty lines have 3 words or fewer, and there are at least 10 such lines: a list of titles, tags or links, not prose;
+   - keyword tail (fix): at least 4 lines at the end of the document, each of 2 to 5 words, all lower case, without punctuation (search keywords appended to a page, such as "pitman shorthand grammalogues"), are removed.
 
-   In code: the function `b4_spans(text)` in **Runnable code** at the end of this sheet.
+   In code (the function the medicine runs; the patterns, weights and helpers it uses are in Appendix B, the full runnable file):
 
-3. **Action:** fix for template junk (the expression is removed); drop for a document that is mostly code.
+```python
+def c5_spans(text):
+    """C5: the whole document (drop) when it is mostly very short lines; else a lower-case keyword tail (fix)."""
+    raw, pos = [], 0
+    for line in text.split("\n"):
+        if line.strip():
+            raw.append((pos, line))
+        pos += len(line) + 1
+    short = sum(1 for _, l in raw if len(l.split()) <= C5_SHORT_WORDS)
+    if raw and short >= C5_SHORT_MIN and short > C5_SHORT_SHARE * len(raw):
+        return [(0, len(text), "C5-list-page")]
+    tail = []
+    for off, line in reversed(raw):
+        s = line.strip()
+        if 2 <= len(s.split()) <= 5 and _C5_KEYWORD.match(s):
+            tail.append((off, off + len(line), "C5-keyword-tail"))
+        else:
+            break
+    return tail[::-1] if len(tail) >= C5_TAIL_LINES else []
+```
 
-4. **Harm test:** proxy gold set = the 202 rows of `labels.csv` with verdict `clean` (each read in full, no disease found). The medicine changes or drops **0 of 202** of them (0.00%): **pass** against the 1% bar. On the whole pack it changes 1 of 500 documents and removes 41 of 2,442,877 characters (0.00%). The official gold set for English (owned by Data A) is not published yet; this test will be repeated on it when it is.
+3. **Action:** drop for a list page (the whole document); fix for a keyword tail (the tail is removed).
 
-5. **Side effects:** the medicine finds 1 of the 16 labelled cases. On the whole pack it changes 1 document. The mostly-code part drops no document of this pack: the most code-like one (document 10) has code in only 3% of its text. The other B4 documents are articles with a code snippet (a Visual Basic or Java listing, a Ruby example, a command manual page, a Haskell mailing-list post), kept on purpose; the readers' labels remain the record of them. Code flattened into a prose line by the original crawl is hard to tell from prose with symbols, which is why the drop needs more than half of the document to be code.
+4. **Harm test:** changes 0 of 202 gold documents, drops 0 of 202 gold documents (0.00% changed or dropped): **pass** against the 1% bar. The official English gold set (Data A) is not published yet, so the gold set here is a proxy: the 202 rows of `labels.csv` with verdict `clean` (each read in full, no disease found). On the whole pack it changes 2 of 500 documents and removes 2,726 of 2,442,877 characters (0.11%). The test will be repeated on the gold set when it is published.
 
-## Test on unseen documents
+5. **Side effects:** the medicine finds 4 of the 6 labelled cases. On the whole pack it changes 2 documents, all of them labelled C5. It misses list pages whose lines are long (a list of journal references, a list of story titles with more than three words), which the readers labelled and dropped.
+
+## Medicine 7
+
+1. **Disease:** C2 (repeated lines), count in the pack: 2 documents (8 labelled cases). Examples (only 2 documents have C2): `b888d78a21618c96` "Children & parents"; `ec2b61417f2900c8` "family, an enveloped RNA virus family, and, more particularly".
+
+2. **Medicine:** Remove the later copies of a line that appears 3 or more times in the same document (lines of at least 10 characters, compared without extra spaces); the first copy is kept. Shorter lines ("*", "Answer") are left alone.
+
+   In code (the function the medicine runs; the patterns, weights and helpers it uses are in Appendix B, the full runnable file):
+
+```python
+def c2_spans(text):
+    """C2: later copies of a line repeated C2_MIN_REPEAT or more times in the document."""
+    seen, lines, pos = {}, [], 0
+    for line in text.split("\n"):
+        key = " ".join(line.split())
+        if len(key) >= C2_MIN_CHARS:
+            lines.append((pos, pos + len(line), key))
+            seen[key] = seen.get(key, 0) + 1
+        pos += len(line) + 1
+    out, first = [], set()
+    for s, e, key in lines:
+        if seen[key] >= C2_MIN_REPEAT:
+            if key in first:
+                out.append((s, e, "C2-repeated-line"))
+            first.add(key)
+    return out
+```
+
+3. **Action:** fix. The matched text is removed; the rest of the document is kept.
+
+4. **Harm test:** changes 0 of 202 gold documents, drops 0 of 202 gold documents (0.00% changed or dropped): **pass** against the 1% bar. The official English gold set (Data A) is not published yet, so the gold set here is a proxy: the 202 rows of `labels.csv` with verdict `clean` (each read in full, no disease found). On the whole pack it changes 4 of 500 documents and removes 298 of 2,442,877 characters (0.01%). The test will be repeated on the gold set when it is published.
+
+5. **Side effects:** the medicine finds 6 of the 8 labelled cases. On the whole pack it changes 4 documents: besides the labelled repeats it removes repeated section headings that were labelled C1 and repeated table headers, which belong to their tables. It misses a passage printed twice when the copies are not identical line by line (document 53).
+
+---
+
+The appendices below support the medicines above; they are not medicines themselves.
+
+### Appendix A: test on unseen documents
 
 On 2026-10-25, before documents 151–500 were labelled, the medicines' predictions for them were saved (`frozen_predictions.json`; C1 scorer trained on the first 150 documents, threshold 0.97). Comparing them with the labels made afterwards (`frozen_test.py`):
 
@@ -99,14 +284,14 @@ On 2026-10-25, before documents 151–500 were labelled, the medicines' predicti
 
 In the other documents the reader saw the predictions as suggestions while labelling, so agreement there is partly their influence. The medicine above was retrained on all labelled documents after this test.
 
-## Runnable code
+### Appendix B: runnable code
 
 All the medicines in one self-contained Python file: copy it into `medicine_standalone.py` and it runs with the standard library alone (no numpy, no other files). It is generated from the code and the trained weights that were tested above, and it gives the same result as that code on all 500 documents of the pack (0 differences, checked by `standalone.py`), when it is given the pack's line-repetition counts (below). Without them, C1 gives a different result on 7 of the 500 documents, because it cannot tell which lines repeat across the pack.
 
 How to use it:
 
 ```python
-from medicine_standalone import clean, c1_spans, c3_spans, f1_spans, b4_spans, d3_flags, _norm
+from medicine_standalone import clean, c1_spans, c3_spans, f1_spans, b4_spans, c2_spans, c5_spans, d3_flags, _norm
 
 # how many documents of the pack contain each line (the scorer and the gate use it)
 repetition = {}
@@ -118,6 +303,7 @@ cleaned, action = clean(text, repetition)   # action: "keep", "fix" or "drop"
 spans, flagged = c1_spans(text, repetition) # what C1 removes: (start, end, rule); flagged = drop
 c3 = c3_spans(text, repetition)             # what C3 removes
 f1, b4 = f1_spans(text), b4_spans(text)     # what F1 and B4 remove
+c2, c5 = c2_spans(text), c5_spans(text)     # what C2 and C5 remove (C5-list-page = drop)
 flags = d3_flags(text)                      # D3: passages in another alphabet (nothing removed)
 ```
 
@@ -125,8 +311,8 @@ To score a single line: `lines, X = line_features(text, repetition)` gives every
 
 ```python
 """The medicines for en-fineweb-edu: C1 (boilerplate), C3 (truncated document), F1 (personal data), B4
-(template and code junk) and D3 (mixed language: flags only). Self-contained: needs only the Python
-standard library. Usage: cleaned_text, action = clean(text)
+(template and code junk), C2 (repeated lines), C5 (lists of keywords or links) and D3 (mixed language: flags
+only). Self-contained: needs only the Python standard library. Usage: cleaned_text, action = clean(text)
 """
 import math
 import re
@@ -333,6 +519,58 @@ def b4_spans(text):
     return [(m.start(), m.end(), "B4-template") for m in B4_TEMPLATE.finditer(text)]
 
 
+# ----- C2 repeated lines (30 Oct) ------------------------------------------------------------------------------
+# Fix: a line that appears C2_MIN_REPEAT or more times in one document keeps its first copy; the later copies go.
+# Lines shorter than C2_MIN_CHARS ("*", "Answer") are left alone.
+C2_MIN_REPEAT, C2_MIN_CHARS = 3, 10
+
+
+def c2_spans(text):
+    """C2: later copies of a line repeated C2_MIN_REPEAT or more times in the document."""
+    seen, lines, pos = {}, [], 0
+    for line in text.split("\n"):
+        key = " ".join(line.split())
+        if len(key) >= C2_MIN_CHARS:
+            lines.append((pos, pos + len(line), key))
+            seen[key] = seen.get(key, 0) + 1
+        pos += len(line) + 1
+    out, first = [], set()
+    for s, e, key in lines:
+        if seen[key] >= C2_MIN_REPEAT:
+            if key in first:
+                out.append((s, e, "C2-repeated-line"))
+            first.add(key)
+    return out
+
+
+# ----- C5 lists of keywords or links (30 Oct) ------------------------------------------------------------------
+# Drop: a document where more than C5_SHORT_SHARE of the lines have at most C5_SHORT_WORDS words, with at least
+# C5_SHORT_MIN such lines (a list page, not prose). Fix: a tail of at least C5_TAIL_LINES lines at the end, each of
+# 2 to 5 words, all lower case and without punctuation (search keywords appended to a page).
+C5_SHORT_WORDS, C5_SHORT_SHARE, C5_SHORT_MIN, C5_TAIL_LINES = 3, 0.5, 10, 4
+_C5_KEYWORD = re.compile(r"^[a-z0-9][a-z0-9 '-]*$")
+
+
+def c5_spans(text):
+    """C5: the whole document (drop) when it is mostly very short lines; else a lower-case keyword tail (fix)."""
+    raw, pos = [], 0
+    for line in text.split("\n"):
+        if line.strip():
+            raw.append((pos, line))
+        pos += len(line) + 1
+    short = sum(1 for _, l in raw if len(l.split()) <= C5_SHORT_WORDS)
+    if raw and short >= C5_SHORT_MIN and short > C5_SHORT_SHARE * len(raw):
+        return [(0, len(text), "C5-list-page")]
+    tail = []
+    for off, line in reversed(raw):
+        s = line.strip()
+        if 2 <= len(s.split()) <= 5 and _C5_KEYWORD.match(s):
+            tail.append((off, off + len(line), "C5-keyword-tail"))
+        else:
+            break
+    return tail[::-1] if len(tail) >= C5_TAIL_LINES else []
+
+
 # ----- D3 mixed language ---------------------------------------------------------------------------------------
 # Keep: nothing is removed. d3_flags() lists passages in another alphabet so a reader can look at them.
 D3_MIN_WORDS = 3      # words in a row in one other alphabet
@@ -535,10 +773,10 @@ def clean(text, repetition=None):
     spans, flagged = c1_spans(text, repetition)
     if flagged:
         return "", "drop"
-    b4 = b4_spans(text)
-    if b4 and b4[0][2] == "B4-mostly-code":
+    b4, c5 = b4_spans(text), c5_spans(text)
+    if b4 and b4[0][2] == "B4-mostly-code" or c5 and c5[0][2] == "C5-list-page":
         return "", "drop"
-    spans = spans + c3_spans(text, repetition) + f1_spans(text) + b4
+    spans = spans + c3_spans(text, repetition) + f1_spans(text) + b4 + c2_spans(text) + c5
     if not spans:
         return text, "keep"
     for s, e, _ in reversed(_merge(spans)):  # overlapping spans joined, later ones first so offsets stay valid

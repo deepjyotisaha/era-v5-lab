@@ -31,7 +31,7 @@ b92217b50cbd3259,full,fix,C1,"C1: ""Read more: http://feedproxy.goo...penguin-sp
 8c4e05adb054ff9e,full,clean,,,,
 83a74d895270be43,full,fix,C1,"C1: ""Seneca Gardens Arborist Questions? Comments? Email Michael a…"" at offset 3992",,
 f6ffaf98472d4993,full,clean,,,,
-a14b25405c278a3b,full,fix,C1;C5,"C1: ""|| Home…"" at offset 0 (6 separators) | C5: 15 of 24 lines have 3 words or fewer | C5: ends with ""ts Religion and Faith Travel and Leisure"" at offset 2632",,Remove the lines marked.
+a14b25405c278a3b,full,fix,C1;C5,"C1: ""|| Home…"" at offset 0 (6 separators) | C5: 15 of 24 lines have 3 words or fewer at offset 0 (whole document) | C5: ends with ""ts Religion and Faith Travel and Leisure"" at offset 2632",,Remove the lines marked.
 da7b26e33a187835,full,fix,C1;C3,"C1: ends with ""t question...) Other Interview Questions"" at offset 577 | C3: ""What is a rendezvous point? (Continued from previous questio…"" at offset 0",,Remove the lines marked.
 95fb8e3e046c12c8,full,fix,C1,"C1: (a person's name, left out) at offset 78",,remove the byline
 c6445e00ac9c7e0e,full,clean,,,,
@@ -223,7 +223,7 @@ a3b57c25bc83ac52,full,fix,C1,"C1: ends with ""ics, August 5 2012. DOI: 10.1038/n
 e1fd5bf5650abfd5,full,fix,C1,"C1: ends with ""ee grows.Learn more about Trees & Bushes"" at offset 1468 | C1: ""Learn more about Trees & Bushes"" at offset 1438",,
 ea6f1e5da74e3074,full,clean,,,,
 7e6d060659c95a8f,full,clean,,,,
-a74cff8231500466,full,fix,A4,"A4: ""??????? (chel?d?n)"" at offset 1491",A4: U+003F (9 times),Greek word lost as question marks before release.
+a74cff8231500466,full,fix,A4,"A4: ""??????? (chel?d?n)"" at offset 1491",A4: 3f (U+003F) (9 times),Greek word lost as question marks before release.
 dc6beefc0b6a0d7b,full,clean,,,,
 06bacb0867128c27,full,fix,C1,"C1: ""Read more at Nautilus"" at offset 922 (phrase ""read more"") | C1: ends with ""e at Nautilus Photo credit: Shutterstock"" at offset 969 | C1: ""Photo credit: Shutterstock"" at offset 944 | C1: ""Read more at Nautilus Photo credit: Shutterstock"" at offset 922",,
 80446d7e3241439b,full,clean,,,,
@@ -354,7 +354,7 @@ cdc1fccbdbba3443,full,fix,C1,"C1: (a person's name, left out) at offset 6092",,
 44ae7063fd8892d9,full,fix,C1,"C1: ""Read more…"" (a name left out) at offset 4492 (phrase ""read more"") | C1: ""[Image: Flickr user JulieFaith]"" at offset 4460 | C1: ""[Image: Flickr user JulieFaith] Read more…"" (a name left out) at offset 4460 | C1: ""More"" at offset 5149 | C1: ""at martinlindstrom.com."" at offset 5153",,
 b09798d82265d9c9,full,fix,C1,"C1: ""Learn something new every day More Info... by email"" at offset 0",,
 8b9aaf1392d1042b,full,fix,C1,"C1: ends with "" soon. Your Rohde & Schwarz Service Team"" at offset 1237 | C1: ""Your request was successfully sent! We will get in touch wit…"" at offset 1133",,
-b888d78a21618c96,full,fix,A1;C1;C2;C4,"A1: HANGUL CHOSEONG FILLER (U+115F) at offset 40560, 8 times | C1: (a person's name, left out) at offset 132 | C1: ""Received: 19 February 2014"" at offset 158 (+2 more) | C2: ""Children & parents"" at offset 5188, repeated 8 times (+6 more) | C4: (a person's name, left out) at offset 32239",A1: U+115F,Remove the joined doc.
+b888d78a21618c96,full,fix,A1;C1;C2;C4,"A1: HANGUL CHOSEONG FILLER (U+115F) at offset 40560, 8 times | C1: (a person's name, left out) at offset 132 | C1: ""Received: 19 February 2014"" at offset 158 (+2 more) | C2: ""Children & parents"" at offset 5188, repeated 8 times (+6 more) | C4: (a person's name, left out) at offset 32239",A1: e1 85 9f (U+115F),Remove the joined doc.
 cb9433ccbaefca49,full,fix,C1,"C1: ends with "" collection of more than 27,000 articles"" at offset 4857 | C1: ""THORNTON, WARD A. [TEX]"" at offset 0 | C1: ""THORNTON, WARD A. [TEX] (1891–1949)."" at offset 24 | C1: ""For more information go to: http://www.law.cornell.edu/uscod…"" at offset 4114 (+1 more)",,Remove boilerplate lines
 8bdfca221e2520d7,full,fix,C1,"C1: ""Visit tinyurl.com/Talk-121 to see an Almanac story online wi…"" at offset 1988",,
 ff2d1f2e99397d57,full,clean,,,,
@@ -407,7 +407,7 @@ a1122b2e254c15cd,full,fix,C1,"C1: ends with ""tions and References HELP for Refe
 f23cd9cd1a4e2e3e,full,clean,,,,
 1f19a0bfcdf0d138,full,fix,C1,"C1: ""Revista chilena de pediatría versión impresa ISSN 0370-4106"" at offset 0 | C1: ""Revista chilena de pediatría versión impresa ISSN 0370-4106"" at offset 0 | C1: ""Palabras clave : infant mortality; infant health."" at offset 1367 (+1 more)",,
 9114e814ed1018ef,full,fix,C1,"C1: ""© 2010 – Routledge"" at offset 0",,
-53dadf5fc6ee123a,full,fix,A3;C1,"A3: ""â€”"" (should be —) at offset 380, 2 times | A3: ""â€™"" (should be ’) at offset 790, 2 times | A3: ""â€"" (should be ” (or another broken quote)) at offset 1095, 4 times | C1: ends with ""h endpoints. Source: Winnipeg Free Press"" at offset 2966 | C1: ""Source: Winnipeg Free Press"" at offset 2940",A3: U+00E2 U+20AC U+201D | A3: U+00E2 U+20AC U+2122 | A3: U+00E2 U+20AC,
+53dadf5fc6ee123a,full,fix,A3;C1,"A3: ""â€”"" (should be —) at offset 380, 2 times | A3: ""â€™"" (should be ’) at offset 790, 2 times | A3: ""â€"" (should be ” (or another broken quote)) at offset 1095, 4 times | C1: ends with ""h endpoints. Source: Winnipeg Free Press"" at offset 2966 | C1: ""Source: Winnipeg Free Press"" at offset 2940",A3: c3 a2 e2 82 ac e2 80 9d (U+00E2 U+20AC U+201D) | A3: c3 a2 e2 82 ac e2 84 a2 (U+00E2 U+20AC U+2122) | A3: c3 a2 e2 82 ac (U+00E2 U+20AC),
 20f78601b80c9a2d,full,fix,C1,"C1: ""Have a question about this product? Ask us here."" at offset 1762",,
 1bf39e9580aa9c3c,full,fix,C1,"C1: ""1855 (dated) 41 x 78 in (104.14 x 198.12 cm) 1 : 750000"" at offset 229",,
 539012fb4f4d8c34,full,fix,C1,"C1: ""SYDNEY, Australia (JTA) —"" at offset 0",,

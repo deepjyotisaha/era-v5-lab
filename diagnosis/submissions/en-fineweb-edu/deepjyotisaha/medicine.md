@@ -53,7 +53,7 @@ def c1_spans(text, repetition=None):
 
 3. **Action:** fix. The matched text is removed; the rest of the document is kept. A document the guard flags is dropped.
 
-4. **Harm test:** changes 2 of 202 gold documents, drops 0 of 202 gold documents (0.99% changed or dropped): **pass** against the 1% bar. The official English gold set (Data A) is not published yet, so the gold set here is a proxy: the 202 rows of `labels.csv` with verdict `clean` (each read in full, no disease found), each tested by a scorer that had not seen it. On the whole pack it changes 153 of 500 documents and removes 16,704 of 2,442,877 characters (0.68%). The test will be repeated on the gold set when it is published.
+4. **Harm test:** changes 1 of 158 gold documents, drops 0 of 158 gold documents (0.63% changed or dropped): **pass** against the 1% bar. Gold set: `teams/01-data-a/gold/en-fineweb-edu_gold.csv` from the Data A team (G1, pull request 140, commit c3cb003): 158 documents of this pack that two readers each read in full and marked clean. What it changes there: `45dea3bce4c98f48` loses "EPA initially published the rule in October 2011, but then withdrew it July 20, 2012.". With a scorer that had not seen the document (the five-fold test), C1 changes 2 of 158 gold documents (1.27%): `9073b10038f6c85c`; `45dea3bce4c98f48` (lines that carry a date or look like a heading; see side effects). Also on the 202 rows of `labels.csv` with verdict `clean` (each tested by a scorer that had not seen it): changes 2, drops 0 (0.99%). On the whole pack it changes 153 of 500 documents and removes 16,704 of 2,442,877 characters (0.68%).
 
 5. **Side effects:** on documents the scorer had not seen, the medicine finds 229 of the 540 labelled C1 lines (42%; the phrase rules alone find 117). It misses C1 that has no fixed wording and no boilerplate signal: one-off site headings ("Programs for children", "Chapter 02 Worksheet"), reference lists and citations, catalogue records and promotion inside a long paragraph. These are left to the readers. Article titles are kept on purpose: the first version of the scorer removed titles and sentences such as "By the end of 1992, …" from clean documents, which is why the scorer may only remove signalled lines. Remaining risks: a "Source:" line under a chart, and a short line with a date or a link word that belongs to the article.
 
@@ -86,7 +86,7 @@ def c3_spans(text, repetition=None):
 
 3. **Action:** fix. The matched text is removed; the rest of the document is kept.
 
-4. **Harm test:** changes 0 of 202 gold documents, drops 0 of 202 gold documents (0.00% changed or dropped): **pass** against the 1% bar. The official English gold set (Data A) is not published yet, so the gold set here is a proxy: the 202 rows of `labels.csv` with verdict `clean` (each read in full, no disease found). On the whole pack it changes 4 of 500 documents and removes 346 of 2,442,877 characters (0.01%). The test will be repeated on the gold set when it is published.
+4. **Harm test:** changes 0 of 158 gold documents, drops 0 of 158 gold documents (0.00% changed or dropped): **pass** against the 1% bar. Gold set: `teams/01-data-a/gold/en-fineweb-edu_gold.csv` from the Data A team (G1, pull request 140, commit c3cb003): 158 documents of this pack that two readers each read in full and marked clean. Also on the 202 rows of `labels.csv` with verdict `clean`: changes 0, drops 0 (0.00%). On the whole pack it changes 4 of 500 documents and removes 346 of 2,442,877 characters (0.01%).
 
 5. **Side effects:** the medicine finds 2 of the 14 labelled cases. It misses cut-offs that do not end on a dangling word or a colon (for example a teaser ending in "..."), and documents that start in the middle of a sentence. Some labelled cut-offs are removed by the C1 medicine first, because their last line is also a link ("…For more information about the collection, visit"). On the whole pack it changes 4 documents; checked on 25 Oct, one of them is a title ending in "On" ("The Saga Lives On"), which is a wrong removal.
 
@@ -112,7 +112,7 @@ def b4_spans(text):
 
 3. **Action:** fix for template junk (the expression is removed); drop for a document that is mostly code.
 
-4. **Harm test:** changes 0 of 202 gold documents, drops 0 of 202 gold documents (0.00% changed or dropped): **pass** against the 1% bar. The official English gold set (Data A) is not published yet, so the gold set here is a proxy: the 202 rows of `labels.csv` with verdict `clean` (each read in full, no disease found). On the whole pack it changes 1 of 500 documents and removes 41 of 2,442,877 characters (0.00%). The test will be repeated on the gold set when it is published.
+4. **Harm test:** changes 0 of 158 gold documents, drops 0 of 158 gold documents (0.00% changed or dropped): **pass** against the 1% bar. Gold set: `teams/01-data-a/gold/en-fineweb-edu_gold.csv` from the Data A team (G1, pull request 140, commit c3cb003): 158 documents of this pack that two readers each read in full and marked clean. Also on the 202 rows of `labels.csv` with verdict `clean`: changes 0, drops 0 (0.00%). On the whole pack it changes 1 of 500 documents and removes 41 of 2,442,877 characters (0.00%).
 
 5. **Side effects:** the medicine finds 1 of the 16 labelled cases. On the whole pack it changes 1 document. The mostly-code part drops no document of this pack: the most code-like one (document 10) has code in only 3% of its text. The other B4 documents are articles with a code snippet (a Visual Basic or Java listing, a Ruby example, a command manual page, a Haskell mailing-list post), kept on purpose; the readers' labels remain the record of them. Code flattened into a prose line by the original crawl is hard to tell from prose with symbols, which is why the drop needs more than half of the document to be code.
 
@@ -163,7 +163,7 @@ def f1_spans(text):
 
 3. **Action:** fix. The matched text is removed; the rest of the document is kept.
 
-4. **Harm test:** changes 0 of 202 gold documents, drops 0 of 202 gold documents (0.00% changed or dropped): **pass** against the 1% bar. The official English gold set (Data A) is not published yet, so the gold set here is a proxy: the 202 rows of `labels.csv` with verdict `clean` (each read in full, no disease found). On the whole pack it changes 8 of 500 documents and removes 200 of 2,442,877 characters (0.01%). The test will be repeated on the gold set when it is published.
+4. **Harm test:** changes 0 of 158 gold documents, drops 0 of 158 gold documents (0.00% changed or dropped): **pass** against the 1% bar. Gold set: `teams/01-data-a/gold/en-fineweb-edu_gold.csv` from the Data A team (G1, pull request 140, commit c3cb003): 158 documents of this pack that two readers each read in full and marked clean. Also on the 202 rows of `labels.csv` with verdict `clean`: changes 0, drops 0 (0.00%). On the whole pack it changes 8 of 500 documents and removes 200 of 2,442,877 characters (0.01%).
 
 5. **Side effects:** the medicine finds 13 of the 13 labelled cases. On the whole pack it changes 8 documents, all of them labelled F1. It misses personal data with no fixed shape: names, home addresses, and numbers written in words or grouped in an unusual way. Every phone number counts, also an organisation's (decided 24 Oct). After the removal a sentence such as "call … for details" can read oddly.
 
@@ -194,7 +194,7 @@ def d3_flags(text):
 
 3. **Action:** fix, with an empty fix: no text is changed and no document is dropped, because DISEASES.md says mixed language can be natural and is to be labelled, not judged. `d3_flags` only lists the passages for a reader.
 
-4. **Harm test:** changes 0 of 202 gold documents, drops 0 of 202 gold documents (0.00% changed or dropped): **pass** against the 1% bar. The official English gold set (Data A) is not published yet, so the gold set here is a proxy: the 202 rows of `labels.csv` with verdict `clean` (each read in full, no disease found). On the whole pack it changes 0 of 500 documents and removes 0 of 2,442,877 characters (0.00%). The test will be repeated on the gold set when it is published.
+4. **Harm test:** changes 0 of 158 gold documents, drops 0 of 158 gold documents (0.00% changed or dropped): **pass** against the 1% bar. Gold set: `teams/01-data-a/gold/en-fineweb-edu_gold.csv` from the Data A team (G1, pull request 140, commit c3cb003): 158 documents of this pack that two readers each read in full and marked clean. Also on the 202 rows of `labels.csv` with verdict `clean`: changes 0, drops 0 (0.00%). On the whole pack it changes 0 of 500 documents and removes 0 of 2,442,877 characters (0.00%).
 
 5. **Side effects:** the medicine flags 25 of the 26 labelled cases. It cannot see mixed language in the Latin alphabet (the Indonesian case), which only reading finds. Removing nothing is deliberate: every labelled case is part of its article. It also flags document 356, which is not labelled D3 (in document 356 the flag is invisible Hangul filler characters, A1 junk, not language).
 
@@ -231,7 +231,7 @@ def c5_spans(text):
 
 3. **Action:** drop for a list page (the whole document); fix for a keyword tail (the tail is removed).
 
-4. **Harm test:** changes 0 of 202 gold documents, drops 0 of 202 gold documents (0.00% changed or dropped): **pass** against the 1% bar. The official English gold set (Data A) is not published yet, so the gold set here is a proxy: the 202 rows of `labels.csv` with verdict `clean` (each read in full, no disease found). On the whole pack it changes 2 of 500 documents and removes 2,726 of 2,442,877 characters (0.11%). The test will be repeated on the gold set when it is published.
+4. **Harm test:** changes 0 of 158 gold documents, drops 0 of 158 gold documents (0.00% changed or dropped): **pass** against the 1% bar. Gold set: `teams/01-data-a/gold/en-fineweb-edu_gold.csv` from the Data A team (G1, pull request 140, commit c3cb003): 158 documents of this pack that two readers each read in full and marked clean. Also on the 202 rows of `labels.csv` with verdict `clean`: changes 0, drops 0 (0.00%). On the whole pack it changes 2 of 500 documents and removes 2,726 of 2,442,877 characters (0.11%).
 
 5. **Side effects:** the medicine finds 4 of the 6 labelled cases. On the whole pack it changes 2 documents, all of them labelled C5. It misses list pages whose lines are long (a list of journal references, a list of story titles with more than three words), which the readers labelled and dropped.
 
@@ -264,7 +264,7 @@ def c2_spans(text):
 
 3. **Action:** fix. The matched text is removed; the rest of the document is kept.
 
-4. **Harm test:** changes 0 of 202 gold documents, drops 0 of 202 gold documents (0.00% changed or dropped): **pass** against the 1% bar. The official English gold set (Data A) is not published yet, so the gold set here is a proxy: the 202 rows of `labels.csv` with verdict `clean` (each read in full, no disease found). On the whole pack it changes 4 of 500 documents and removes 298 of 2,442,877 characters (0.01%). The test will be repeated on the gold set when it is published.
+4. **Harm test:** changes 0 of 158 gold documents, drops 0 of 158 gold documents (0.00% changed or dropped): **pass** against the 1% bar. Gold set: `teams/01-data-a/gold/en-fineweb-edu_gold.csv` from the Data A team (G1, pull request 140, commit c3cb003): 158 documents of this pack that two readers each read in full and marked clean. Also on the 202 rows of `labels.csv` with verdict `clean`: changes 0, drops 0 (0.00%). On the whole pack it changes 4 of 500 documents and removes 298 of 2,442,877 characters (0.01%).
 
 5. **Side effects:** the medicine finds 6 of the 8 labelled cases. On the whole pack it changes 4 documents: besides the labelled repeats it removes repeated section headings that were labelled C1 and repeated table headers, which belong to their tables. It misses a passage printed twice when the copies are not identical line by line (document 53).
 
